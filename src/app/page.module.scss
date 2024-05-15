@@ -1,0 +1,64 @@
+.leagueLists {
+  padding: 100px;
+
+  &__title {
+    text-align: center;
+    color: #223a70;
+    font-size: 30px;
+    margin: 0 0 50px 0;
+  }
+
+  &__items {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 30px;
+  }
+
+  &__item {
+    border: 1px solid #ccc;
+    list-style: none;
+    text-align: center;
+    background-color: #223a70;
+    padding: 20px 10px;
+    width: 200px;
+    cursor: pointer;
+    border-radius: 10px;
+    border: 5px solid #223a70;
+    transition: 0.2s;
+
+    &:hover {
+      background-color: #223a70;
+      opacity: 0.8;
+      transition: 0.2s;
+    }
+  }
+
+  &__item__name {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 60px;
+    color: #fff;
+    font-size: 22px;
+    font-weight: bold;
+    margin: 0 0 20px;
+  }
+
+  &__item__emblem {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+    width: 90px;
+    height: 90px;
+    margin: 0 auto 20px;
+    border-radius: 10px;
+  }
+
+  &__item__areaName {
+    color: #fff;
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0;
+  }
+}
