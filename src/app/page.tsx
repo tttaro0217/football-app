@@ -7,6 +7,7 @@ import s from "./page.module.scss";
 type LeagueData = {
   id: number;
   name: string;
+  code: string;
   emblem: string;
   area: {
     name: string;
@@ -15,6 +16,8 @@ type LeagueData = {
 
 export default function Page() {
   const [leagueListDatas, setLeagueListDatas] = useState<LeagueData[]>([]);
+  const [leagueData, setLeagueData] = useState(Object);
+  const [leagueCode, setLeagueCode] = useState("");
 
   useEffect(() => {
     async function fetchLeagueList() {
@@ -23,29 +26,43 @@ export default function Page() {
         const jsonData = await res.json();
         console.log(jsonData);
         setLeagueListDatas(jsonData.data.competitions);
-        console.log(jsonData.data.competitions[0]);
       } catch (error) {
         console.error("Errorだよ", error);
       }
     }
-
     fetchLeagueList();
   }, []);
 
-  const getLeagueName = (index: number) => {
-    //leagueListDataの番号を取得
-    const leagueNumber = index;
-    console.log(leagueNumber);
+  console.log(leagueListDatas);
+  console.log(leagueData);
+
+  const getLeagueCode = (code: string) => {
+    setLeagueCode(code);
   };
+
+  console.log(leagueCode);
+
+  useEffect(() => {
+    async function fetchLeagueData() {
+      try {
+        const res = await fetch(`/api/${leagueCode}`);
+        const jsonData = await res.json();
+        setLeagueData(jsonData);
+      } catch (error) {
+        console.error("Errorだよ", error);
+      }
+    }
+    fetchLeagueData();
+  }, [leagueCode]);
 
   return (
     <main className={s["leagueLists"]}>
       <div>
         <h2 className={s["leagueLists__title"]}>LEAGUE LIST</h2>
         <ul className={s["leagueLists__items"]}>
-          {leagueListDatas.map((leagueListData, index) => (
+          {leagueListDatas.map((leagueListData) => (
             <li
-              onClick={() => getLeagueName(index)}
+              onClick={() => getLeagueCode(leagueListData.code)}
               key={leagueListData.id}
               className={s["leagueLists__item"]}
             >
