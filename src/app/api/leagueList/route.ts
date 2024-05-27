@@ -1,4 +1,4 @@
-//src/app/api/admin/route.ts
+//src/app/api/leaguList/route.ts
 
 export async function GET() {
   // リクエストがGETメソッドである場合のみ処理を実行

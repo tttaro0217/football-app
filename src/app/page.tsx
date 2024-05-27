@@ -1,8 +1,11 @@
+//src/app/page.tsx
+
 "use client";
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import s from "./page.module.scss";
+import { useRouter } from "next/navigation";
 
 type LeagueData = {
   id: number;
@@ -16,15 +19,19 @@ type LeagueData = {
 
 export default function Page() {
   const [leagueListDatas, setLeagueListDatas] = useState<LeagueData[]>([]);
-  const [leagueData, setLeagueData] = useState(Object);
   const [leagueCode, setLeagueCode] = useState("");
+
+  const router = useRouter();
+  const navigateToLeague = (code: string) => {
+    setLeagueCode(code);
+    router.push(`league/${code}`);
+  };
 
   useEffect(() => {
     async function fetchLeagueList() {
       try {
         const res = await fetch(`/api/leagueList`);
         const jsonData = await res.json();
-        console.log(jsonData);
         setLeagueListDatas(jsonData.data.competitions);
       } catch (error) {
         console.error("Errorだよ", error);
@@ -33,23 +40,17 @@ export default function Page() {
     fetchLeagueList();
   }, []);
 
-  console.log(leagueListDatas);
-  console.log(leagueData);
-
-  const getLeagueCode = (code: string) => {
-    setLeagueCode(code);
-  };
-
-  console.log(leagueCode);
+  console.log("leagueListDatas", leagueListDatas);
+  console.log("leagueCode", leagueCode);
 
   useEffect(() => {
     async function fetchLeagueData() {
       try {
-        const res = await fetch(`/api/${leagueCode}`);
+        const res = await fetch(`/api/league/${leagueCode}`);
         const jsonData = await res.json();
-        setLeagueData(jsonData);
+        console.log("Fetched league data:", jsonData);
       } catch (error) {
-        console.error("Errorだよ", error);
+        console.error("Error fetching league data:", error);
       }
     }
     fetchLeagueData();
@@ -62,7 +63,7 @@ export default function Page() {
         <ul className={s["leagueLists__items"]}>
           {leagueListDatas.map((leagueListData) => (
             <li
-              onClick={() => getLeagueCode(leagueListData.code)}
+              onClick={() => navigateToLeague(leagueListData.code)}
               key={leagueListData.id}
               className={s["leagueLists__item"]}
             >
@@ -84,7 +85,6 @@ export default function Page() {
           ))}
         </ul>
       </div>
-      <p>{}</p>
     </main>
   );
 }
