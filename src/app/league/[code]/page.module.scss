@@ -1,0 +1,42 @@
+.leagueDetails {
+  &__outer {
+    display: flex;
+  }
+
+  &__versus {
+    display: flex;
+    gap: 10px;
+
+    p {
+      margin: 0;
+    }
+  }
+
+  &__content {
+    display: flex;
+    gap: 100px;
+  }
+}
+
+.pagination {
+  display: flex;
+  gap: 10px;
+
+  &__btn {
+    padding: 5px;
+    width: 100px;
+    background-color: #223a70;
+    color: #fff;
+    border-radius: 15px;
+    cursor: pointer;
+  }
+}
+
+.btn {
+  cursor: pointer;
+  display: block;
+
+  &:hover {
+    border-bottom: 1px solid #223a70;
+  }
+}
