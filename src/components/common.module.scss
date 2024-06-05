@@ -1,0 +1,84 @@
+.matches {
+  &__versus {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  &__teamOuter,
+  &__competition {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    color: #022eb0;
+    cursor: pointer;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.matches__table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  text-align: center;
+}
+
+.matches__table th,
+.matches__table td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: center;
+}
+
+.matches__table th {
+  background-color: #223a70;
+  color: #fff;
+}
+
+.matches__table tr {
+  &:hover {
+    background-color: #ddd;
+  }
+}
+
+.matches__table tr:nth-child(even) {
+  background-color: #f9f9f9;
+
+  &:hover {
+    background-color: #ddd;
+  }
+}
+
+.filter {
+  margin: 0 0 20px 5px;
+  padding: 8px;
+}
+
+.page__text {
+  margin-bottom: 10px;
+}
+
+.pagination {
+  display: flex;
+  gap: 10px;
+  width: 320px;
+  margin: 0 auto;
+
+  &__btn {
+    padding: 5px;
+    width: 100px;
+    background-color: #223a70;
+    color: #fff;
+    border-radius: 15px;
+    cursor: pointer;
+  }
+}
+
+.active {
+  background-color: red;
+}

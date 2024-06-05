@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import s from "./page.module.scss";
 import { useRouter } from "next/navigation";
+import Header from "../components/Header";
 
 type LeagueData = {
   id: number;
@@ -57,34 +58,37 @@ export default function Page() {
   }, [leagueCode]);
 
   return (
-    <main className={s["leagueLists"]}>
-      <div>
-        <h2 className={s["leagueLists__title"]}>LEAGUE LIST</h2>
-        <ul className={s["leagueLists__items"]}>
-          {leagueListDatas.map((leagueListData) => (
-            <li
-              onClick={() => navigateToLeague(leagueListData.code)}
-              key={leagueListData.id}
-              className={s["leagueLists__item"]}
-            >
-              <p className={s["leagueLists__item__name"]}>
-                {leagueListData.name}
-              </p>
-              <div className={s["leagueLists__item__emblem"]}>
-                <Image
-                  src={leagueListData.emblem}
-                  alt=""
-                  width={60}
-                  height={60}
-                />
-              </div>
-              <p className={s["leagueLists__item__areaName"]}>
-                {leagueListData.area.name}
-              </p>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </main>
+    <>
+      <Header></Header>
+      <main className={s["leagueLists"]}>
+        <div>
+          <h2 className={s["leagueLists__title"]}>LEAGUE LIST</h2>
+          <ul className={s["leagueLists__items"]}>
+            {leagueListDatas.map((leagueListData) => (
+              <li
+                onClick={() => navigateToLeague(leagueListData.code)}
+                key={leagueListData.id}
+                className={s["leagueLists__item"]}
+              >
+                <p className={s["leagueLists__item__name"]}>
+                  {leagueListData.name}
+                </p>
+                <div className={s["leagueLists__item__emblem"]}>
+                  <Image
+                    src={leagueListData.emblem}
+                    alt=""
+                    width={60}
+                    height={60}
+                  />
+                </div>
+                <p className={s["leagueLists__item__areaName"]}>
+                  {leagueListData.area.name}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </main>
+    </>
   );
 }
