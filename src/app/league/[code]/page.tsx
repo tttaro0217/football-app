@@ -2,7 +2,7 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import Image from "next/image";
+import ImageWithFallback from "../../../components/ImageWithFallback";
 import s from "./page.module.scss";
 import c from "../../../components/common.module.scss";
 import Header from "../../../components/Header";
@@ -158,7 +158,7 @@ export default function LeaguePage() {
         try {
           const res = await fetch(`/api/league/${code}/matches`);
           const jsonData = await res.json();
-          setMatchesDatas(jsonData.matches.reverse());
+          setMatchesDatas(jsonData.matches);
         } catch (error) {
           console.error("Error fetching league data:", error);
         }
@@ -256,7 +256,12 @@ export default function LeaguePage() {
       <main className={s["leagueDetails"]}>
         <div className={s["title"]}>
           <div className={s["title__emblem"]}>
-            <Image src={leagueData.emblem} alt="" width={80} height={80} />
+            <ImageWithFallback
+              src={leagueData.emblem}
+              alt={leagueData.name}
+              width={80}
+              height={80}
+            />
           </div>
           <h2
             className={s["title__text"]}
@@ -295,182 +300,200 @@ export default function LeaguePage() {
           {activeTab === "scores" ? (
             <div>
               <h3>得点ランキング</h3>
-              <table className={s["scoresTable"]}>
-                <thead>
-                  <tr>
-                    <th>順位</th>
-                    <th>名前</th>
-                    <th>チーム</th>
-                    <th>ゴール数 (PK数)</th>
-                    <th>アシスト数</th>
-                    <th>試合数</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {scoresDatas.map((scoresData, index) => (
-                    <tr key={scoresData.player.id}>
-                      <td>{index + 1}</td>
-                      <td>
-                        <a
-                          className={s["btn"]}
-                          onClick={() => navigatePersons(scoresData.player.id)}
-                        >
-                          {scoresData.player.name}
-                        </a>
-                      </td>
-                      <td
-                        className={s["btn"]}
-                        onClick={() => navigateTeams(scoresData.team.id)}
-                      >
-                        <Image
-                          src={scoresData.team.crest}
-                          alt=""
-                          width={30}
-                          height={30}
-                        />{" "}
-                        <p className={s["btn"]}>{scoresData.team.name}</p>
-                      </td>
-                      <td>{`${scoresData.goals} (${
-                        scoresData.penalties ?? 0
-                      })`}</td>
-                      <td>{scoresData.assists ?? 0}</td>
-                      <td>{scoresData.playedMatches}</td>
+              {scoresDatas.length > 0 ? (
+                <table className={s["scoresTable"]}>
+                  <thead>
+                    <tr>
+                      <th>順位</th>
+                      <th>名前</th>
+                      <th>チーム</th>
+                      <th>ゴール数 (PK数)</th>
+                      <th>アシスト数</th>
+                      <th>試合数</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {scoresDatas.map((scoresData, index) => (
+                      <tr key={scoresData.player.id}>
+                        <td>{index + 1}</td>
+                        <td>
+                          <a
+                            className={s["btn"]}
+                            onClick={() =>
+                              navigatePersons(scoresData.player.id)
+                            }
+                          >
+                            {scoresData.player.name}
+                          </a>
+                        </td>
+                        <td
+                          className={s["btn"]}
+                          onClick={() => navigateTeams(scoresData.team.id)}
+                        >
+                          <ImageWithFallback
+                            src={scoresData.team.crest}
+                            alt={scoresData.team.name}
+                            width={30}
+                            height={30}
+                          />
+                          <p className={s["btn"]}>{scoresData.team.name}</p>
+                        </td>
+                        <td>{`${scoresData.goals} (${
+                          scoresData.penalties ?? 0
+                        })`}</td>
+                        <td>{scoresData.assists ?? 0}</td>
+                        <td>{scoresData.playedMatches}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <p className={s["leagueDetails__nodata"]}>NO DATA</p>
+              )}
             </div>
           ) : activeTab === "matches" ? (
             <div>
               <h3>試合結果</h3>
-              <div>
-                <label htmlFor="teamFilter">チームでフィルター</label>
-                <select
-                  id="teamFilter"
-                  className={c["filter"]}
-                  onChange={handleFilterTeamChange}
-                >
-                  <option value="">ALL</option>
-                  {teamsData.map((team) => (
-                    <option key={team.id} value={team.id}>
-                      {team.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <table className={c["matches__table"]}>
-                <thead>
-                  <tr>
-                    <th>日時</th>
-                    <th>ホームチーム</th>
-                    <th>スコア</th>
-                    <th>アウェイチーム</th>
-                    {leagueData.type === "CUP" && (
-                      <>
-                        <th>ステージ</th>
-                        <th>グループ</th>
-                      </>
-                    )}
-                  </tr>
-                </thead>
-                <tbody>
-                  {currentMatches.map((matchesData) => {
-                    return (
-                      <tr key={matchesData.id}>
-                        <td>{formatDate(matchesData.utcDate)}</td>
-                        <td>
-                          <div
-                            onClick={() =>
-                              navigateTeams(matchesData.homeTeam.id)
-                            }
-                            className={c["matches__teamOuter"]}
-                          >
-                            <Image
-                              src={matchesData.homeTeam.crest}
-                              alt=""
-                              width={30}
-                              height={30}
-                            />
-                            <p>{matchesData.homeTeam.name}</p>
-                          </div>
-                        </td>
-                        <td>
-                          {matchesData.score.fullTime.home}
-                          {"-"}
-                          {matchesData.score.fullTime.away}
-                        </td>
-                        <td>
-                          <div
-                            onClick={() =>
-                              navigateTeams(matchesData.awayTeam.id)
-                            }
-                            className={c["matches__teamOuter"]}
-                          >
-                            <Image
-                              src={matchesData.awayTeam.crest}
-                              alt=""
-                              width={30}
-                              height={30}
-                            />
-                            <p>{matchesData.awayTeam.name}</p>
-                          </div>
-                        </td>
+              {matchesDatas.length > 0 ? (
+                <>
+                  <div>
+                    <label htmlFor="teamFilter">チームでフィルター</label>
+                    <select
+                      id="teamFilter"
+                      className={c["filter"]}
+                      onChange={handleFilterTeamChange}
+                    >
+                      <option value="">ALL</option>
+                      {teamsData.map((team) => (
+                        <option key={team.id} value={team.id}>
+                          {team.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <table className={c["matches__table"]}>
+                    <thead>
+                      <tr>
+                        <th>日時</th>
+                        <th>ホームチーム</th>
+                        <th>スコア</th>
+                        <th>アウェイチーム</th>
                         {leagueData.type === "CUP" && (
                           <>
-                            <td>{matchesData.stage}</td>
-                            <td>{matchesData.group ?? "-"}</td>
+                            <th>ステージ</th>
+                            <th>グループ</th>
                           </>
                         )}
                       </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-              <p
-                className={c["page__text"]}
-              >{`${currentPage}/${totalPages}`}</p>
-              <div className={c["pagination"]}>
-                <Button
-                  onClick={handleFirstPage}
-                  disabled={currentPage === 1}
-                  className={c["pagination__btn"]}
-                >
-                  First Page
-                </Button>
-                <Button
-                  onClick={handlePreviousPage}
-                  disabled={currentPage === 1}
-                  className={c["pagination__btn"]}
-                >
-                  Previous
-                </Button>
-                <Button
-                  onClick={handleNextPage}
-                  disabled={currentPage >= totalPages}
-                  className={c["pagination__btn"]}
-                >
-                  Next
-                </Button>
-              </div>
+                    </thead>
+                    <tbody>
+                      {currentMatches.map((matchesData) => {
+                        return (
+                          <tr key={matchesData.id}>
+                            <td>{formatDate(matchesData.utcDate)}</td>
+                            <td>
+                              <div
+                                onClick={() =>
+                                  navigateTeams(matchesData.homeTeam.id)
+                                }
+                                className={c["matches__teamOuter"]}
+                              >
+                                <ImageWithFallback
+                                  src={matchesData.homeTeam.crest}
+                                  alt={matchesData.homeTeam.name}
+                                  width={30}
+                                  height={30}
+                                />
+                                <p>{matchesData.homeTeam.name}</p>
+                              </div>
+                            </td>
+                            <td>
+                              {matchesData.score.fullTime.home}
+                              {"-"}
+                              {matchesData.score.fullTime.away}
+                            </td>
+                            <td>
+                              <div
+                                onClick={() =>
+                                  navigateTeams(matchesData.awayTeam.id)
+                                }
+                                className={c["matches__teamOuter"]}
+                              >
+                                <ImageWithFallback
+                                  src={matchesData.awayTeam.crest}
+                                  alt={matchesData.awayTeam.name}
+                                  width={30}
+                                  height={30}
+                                />
+                                <p>{matchesData.awayTeam.name}</p>
+                              </div>
+                            </td>
+                            {leagueData.type === "CUP" && (
+                              <>
+                                <td>{matchesData.stage}</td>
+                                <td>{matchesData.group ?? "-"}</td>
+                              </>
+                            )}
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                  <p
+                    className={c["page__text"]}
+                  >{`${currentPage}/${totalPages}`}</p>
+                  <div className={c["pagination"]}>
+                    <Button
+                      onClick={handleFirstPage}
+                      disabled={currentPage === 1}
+                      className={c["pagination__btn"]}
+                    >
+                      First Page
+                    </Button>
+                    <Button
+                      onClick={handlePreviousPage}
+                      disabled={currentPage === 1}
+                      className={c["pagination__btn"]}
+                    >
+                      Previous
+                    </Button>
+                    <Button
+                      onClick={handleNextPage}
+                      disabled={currentPage >= totalPages}
+                      className={c["pagination__btn"]}
+                    >
+                      Next
+                    </Button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <p>NO DATA</p>
+                </>
+              )}
             </div>
           ) : (
             <div>
               <h3>チーム一覧</h3>
-              <div className={s["teamsGrid"]}>
-                {teamsData.map((teamData) => (
-                  <div key={teamData.id} className={s["teamItem"]}>
-                    <a onClick={() => navigateTeams(teamData.id)}>
-                      <Image
-                        src={teamData.crest}
-                        alt=""
-                        width={50}
-                        height={50}
-                      />
-                      <p>{teamData.name}</p>
-                    </a>
-                  </div>
-                ))}
-              </div>
+              {teamsData.length > 0 ? (
+                <div className={s["teamsGrid"]}>
+                  {teamsData.map((teamData) => (
+                    <div key={teamData.id} className={s["teamItem"]}>
+                      <a onClick={() => navigateTeams(teamData.id)}>
+                        <ImageWithFallback
+                          src={teamData.crest}
+                          alt={teamData.name}
+                          width={50}
+                          height={50}
+                        />
+                        <p>{teamData.name}</p>
+                      </a>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className={c["nodata"]}>NODATA</p>
+              )}
             </div>
           )}
         </div>

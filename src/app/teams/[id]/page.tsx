@@ -1,8 +1,9 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
 import { useEffect, useState } from "react";
-import Image from "next/image";
+import ImageWithFallback from "../../../components/ImageWithFallback";
 import s from "./page.module.scss";
 import c from "../../../components/common.module.scss";
 import Header from "../../../components/Header";
@@ -58,6 +59,12 @@ type MatchData = {
   stage: string;
 };
 
+type FavoriteTeam = {
+  id: number;
+  name: string;
+  crest: string;
+};
+
 export default function TeamsPage() {
   const [teamsData, setTeamsData] = useState<TeamData | null>(null);
   const [teamsMatchesData, setTeamsMatchesData] = useState<MatchData[]>([]);
@@ -71,8 +78,54 @@ export default function TeamsPage() {
     null
   ); // 大会・リーグのフィルタ用状態を追加
 
+  // const [favorites, setFavorites] = useState<[]>([]);
+  const [isReversed, setIsReversed] = useState<boolean>(false);
+
   const itemsPerPage = 10;
   const { id } = useParams(); // useParamsを使ってパスパラメータを取得
+
+  // New state for favorites
+  const [favoriteTeams, setFavoriteTeams] = useState<FavoriteTeam[]>(() => {
+    if (typeof window !== "undefined") {
+      const savedFavorites = localStorage.getItem("favoriteTeams");
+      return savedFavorites ? JSON.parse(savedFavorites) : [];
+    }
+    return [];
+  });
+
+  console.log(favoriteTeams);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("favoriteTeams", JSON.stringify(favoriteTeams));
+    }
+  }, [favoriteTeams]);
+
+  const addFavoriteTeam = (
+    teamId: number,
+    teamName: string,
+    teamCrest: string
+  ) => {
+    setFavoriteTeams((prevFavorites) => {
+      if (!prevFavorites.some((team) => team.id === teamId)) {
+        return [
+          ...prevFavorites,
+          { id: teamId, name: teamName, crest: teamCrest },
+        ];
+      }
+      return prevFavorites;
+    });
+  };
+
+  const removeFavoriteTeam = (teamId: number) => {
+    setFavoriteTeams((prevFavorites) =>
+      prevFavorites.filter((team) => team.id !== teamId)
+    );
+  };
+
+  const isFavoriteTeam = (teamId: number) => {
+    return favoriteTeams.some((team) => team.id === teamId);
+  };
 
   //フィルターをリセット
   useEffect(() => {
@@ -105,7 +158,7 @@ export default function TeamsPage() {
           const res = await fetch(`/api/teams/${id}/matches`);
           const jsonData = await res.json();
           if (jsonData && Array.isArray(jsonData.matches)) {
-            setTeamsMatchesData(jsonData.matches.reverse());
+            setTeamsMatchesData(jsonData.matches);
           } else {
             setTeamsMatchesData([]);
           }
@@ -140,16 +193,14 @@ export default function TeamsPage() {
       )
     : teamsMatchesData;
 
-  const currentMatches =
-    filteredMatches.length > 0
-      ? filteredMatches.slice(startIndex, endIndex)
-      : [];
-  const totalPages = Math.ceil(filteredMatches.length / itemsPerPage);
+  //試合結果の順番をreverse
+  const sortedMatches = isReversed
+    ? filteredMatches.slice().reverse()
+    : filteredMatches;
 
-  const filteredPlayers = teamsData?.squad.filter(
-    (player) =>
-      filterPosition === "" || player.position.includes(filterPosition)
-  );
+  const currentMatches =
+    sortedMatches.length > 0 ? sortedMatches.slice(startIndex, endIndex) : [];
+  const totalPages = Math.ceil(filteredMatches.length / itemsPerPage);
 
   const handleNextPage = () => {
     if (endIndex < filteredMatches.length) {
@@ -207,21 +258,46 @@ export default function TeamsPage() {
     return `${startYear}/${endYear}`;
   };
 
+  const getYouTubeLink = (match: MatchData) => {
+    const searchQuery = `${match.homeTeam.name} vs ${match.awayTeam.name} ${
+      formatDate(match.utcDate).split(" ")[0]
+    }`;
+    return `https://www.youtube.com/results?search_query=${encodeURIComponent(
+      searchQuery
+    )}`;
+  };
+
   console.log("teamsMatchesData", teamsMatchesData);
   console.log("teamsData", teamsData);
 
   return (
     <>
+      <Header></Header>
       {teamsData && teamsMatchesData.length > 0 ? (
         <>
-          <Header></Header>
           <main className={s["teamDetails"]}>
             <div className={s["title"]}>
               <div className={s["title__emblem"]}>
-                <Image src={teamsData.crest} alt="" width={50} height={50} />
+                <ImageWithFallback
+                  src={teamsData.crest}
+                  alt={teamsData.name}
+                  width={50}
+                  height={50}
+                />
               </div>
               <h2 className={s["title__text"]}>{teamsData.name}</h2>
             </div>
+            {/* Favorite button */}
+            <Button
+              onClick={() =>
+                isFavoriteTeam(Number(id))
+                  ? removeFavoriteTeam(Number(id))
+                  : addFavoriteTeam(Number(id), teamsData.name, teamsData.crest)
+              }
+              className={c["favoriteButton"]}
+            >
+              {isFavoriteTeam(Number(id)) ? "お気に入り解除" : "お気に入り"}
+            </Button>
             <div className={s["tabs"]}>
               <Button
                 onClick={() => handleTabClick("players")}
@@ -237,7 +313,7 @@ export default function TeamsPage() {
               </Button>
             </div>
             <div className={s["leagueDetails__content"]}>
-              {activeTab === "players" ? (
+              {teamsData && activeTab === "players" && teamsData.squad ? (
                 <div className={s["players"]}>
                   <h3>所属選手</h3>
                   <label htmlFor="positionFilter">ポジションでフィルター</label>
@@ -333,8 +409,13 @@ export default function TeamsPage() {
                           })
                         : null}
                     </select>
+                    <Button
+                      onClick={() => setIsReversed(!isReversed)}
+                      className={c["reverseButton"]}
+                    >
+                      {isReversed ? "古い順にする" : "最新順にする"}
+                    </Button>
                   </div>
-
                   <table className={c["matches__table"]}>
                     <thead>
                       <tr>
@@ -345,6 +426,7 @@ export default function TeamsPage() {
                         <th>大会・リーグ</th>
                         <th>ステージ</th>
                         <th>グループ</th>
+                        <th>Youtube</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -359,9 +441,9 @@ export default function TeamsPage() {
                                 }
                                 className={c["matches__teamOuter"]}
                               >
-                                <Image
+                                <ImageWithFallback
                                   src={matchesData.homeTeam.crest}
-                                  alt=""
+                                  alt={matchesData.homeTeam.name}
                                   width={30}
                                   height={30}
                                 />
@@ -380,9 +462,9 @@ export default function TeamsPage() {
                                 }
                                 className={c["matches__teamOuter"]}
                               >
-                                <Image
+                                <ImageWithFallback
                                   src={matchesData.awayTeam.crest}
-                                  alt=""
+                                  alt={matchesData.awayTeam.name}
                                   width={30}
                                   height={30}
                                 />
@@ -396,9 +478,9 @@ export default function TeamsPage() {
                                 }
                                 className={s["matches__competition"]}
                               >
-                                <Image
+                                <ImageWithFallback
                                   src={matchesData.competition.emblem}
-                                  alt=""
+                                  alt={matchesData.competition.name}
                                   width={30}
                                   height={30}
                                 />
@@ -413,6 +495,20 @@ export default function TeamsPage() {
                             </td>
                             <td>{matchesData.stage}</td>
                             <td>{matchesData.group ?? "-"}</td>
+                            <td>
+                              <Link
+                                href={getYouTubeLink(matchesData)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                <ImageWithFallback
+                                  src={"/yt_logo_rgb_light.png"}
+                                  alt={"youtube logo"}
+                                  width={64}
+                                  height={14}
+                                ></ImageWithFallback>
+                              </Link>
+                            </td>
                           </tr>
                         );
                       })}
@@ -447,7 +543,7 @@ export default function TeamsPage() {
                 </div>
               ) : null}
             </div>
-            <div>
+            {/* <div>
               <h3>詳細</h3>
               <p>{`スタジアム：${teamsData.venue}`}</p>
               <a
@@ -463,14 +559,16 @@ export default function TeamsPage() {
                 {`${teamsData.coach.contract.start}~${teamsData.coach.contract.until}`}
               </p>
               <p>クラブカラー：{teamsData.clubColors}</p>
-              {/* <a>所属リーグ、大会：{teamsData.runningCompetitions}</a> */}
+              <a>所属リーグ、大会：{teamsData.runningCompetitions}</a>
               <p>{}</p>
-            </div>
+            </div> */}
             <ScrollButton onClick={scrollToTop} />
           </main>
         </>
       ) : (
-        <p>Loading...</p>
+        <div className={c["nodata"]}>
+          <p className={c["nodata__text"]}>NODATA</p>
+        </div>
       )}
     </>
   );

@@ -3,8 +3,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
+import ImageWithFallback from "../components/ImageWithFallback";
 import s from "./page.module.scss";
+import c from "../components/common.module.scss";
 import { useRouter } from "next/navigation";
 import Header from "../components/Header";
 
@@ -21,6 +22,8 @@ type LeagueData = {
 export default function Page() {
   const [leagueListDatas, setLeagueListDatas] = useState<LeagueData[]>([]);
   const [leagueCode, setLeagueCode] = useState("");
+  const [loadingList, setLoadingList] = useState(true);
+  const [loadingCode, setLoadingCode] = useState(true);
 
   const router = useRouter();
   const navigateToLeague = (code: string) => {
@@ -39,13 +42,14 @@ export default function Page() {
       }
     }
     fetchLeagueList();
+    setLoadingList(false); // データ取得完了後にfalseになる falseになったら中身のデータを表示
   }, []);
 
   console.log("leagueListDatas", leagueListDatas);
   console.log("leagueCode", leagueCode);
 
   useEffect(() => {
-    async function fetchLeagueData() {
+    async function fetchLeagueCode() {
       try {
         const res = await fetch(`/api/league/${leagueCode}`);
         const jsonData = await res.json();
@@ -54,7 +58,8 @@ export default function Page() {
         console.error("Error fetching league data:", error);
       }
     }
-    fetchLeagueData();
+    fetchLeagueCode();
+    setLoadingCode(false);
   }, [leagueCode]);
 
   return (
@@ -63,30 +68,36 @@ export default function Page() {
       <main className={s["leagueLists"]}>
         <div>
           <h2 className={s["leagueLists__title"]}>LEAGUE LIST</h2>
-          <ul className={s["leagueLists__items"]}>
-            {leagueListDatas.map((leagueListData) => (
-              <li
-                onClick={() => navigateToLeague(leagueListData.code)}
-                key={leagueListData.id}
-                className={s["leagueLists__item"]}
-              >
-                <p className={s["leagueLists__item__name"]}>
-                  {leagueListData.name}
-                </p>
-                <div className={s["leagueLists__item__emblem"]}>
-                  <Image
-                    src={leagueListData.emblem}
-                    alt=""
-                    width={60}
-                    height={60}
-                  />
-                </div>
-                <p className={s["leagueLists__item__areaName"]}>
-                  {leagueListData.area.name}
-                </p>
-              </li>
-            ))}
-          </ul>
+          {loadingList && loadingCode ? (
+            <p className={c["nodata"]}>Loading...</p>
+          ) : leagueListDatas ? (
+            <ul className={s["leagueLists__items"]}>
+              {leagueListDatas.map((leagueListData) => (
+                <li
+                  onClick={() => navigateToLeague(leagueListData.code)}
+                  key={leagueListData.id}
+                  className={s["leagueLists__item"]}
+                >
+                  <p className={s["leagueLists__item__name"]}>
+                    {leagueListData.name}
+                  </p>
+                  <div className={s["leagueLists__item__emblem"]}>
+                    <ImageWithFallback
+                      src={leagueListData.emblem}
+                      alt={leagueListData.name}
+                      width={60}
+                      height={60}
+                    />
+                  </div>
+                  <p className={s["leagueLists__item__areaName"]}>
+                    {leagueListData.area.name}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className={s["nodata"]}>NO DATA</p>
+          )}
         </div>
       </main>
     </>
