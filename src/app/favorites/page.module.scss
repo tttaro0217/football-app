@@ -8,17 +8,17 @@
     justify-content: center;
     gap: 10px;
 
-    &__button {
+    &__icon {
       background: none;
       border: none;
       font-size: 40px;
-      color: #223a70;
+      color: #f172a3;
       transition: color 0.3s ease;
     }
 
     &__text {
       text-align: center;
-      color: #223a70;
+      color: #f172a3;
       font-size: 30px;
     }
   }

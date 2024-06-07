@@ -42,14 +42,32 @@
     gap: 100px;
   }
 
-  &__season,
-  &__winner {
+  &__season {
     margin: 0 0 30px;
   }
 
-  &__nodata {
-    font-size: 30px;
-    padding-top: 50px;
+  &__winner {
+    margin: 0 0 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+
+    &__icon {
+      font-size: 30px;
+      color: #d0a900;
+    }
+
+    &__team {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    &__text {
+      font-size: 20px;
+    }
   }
 }
 

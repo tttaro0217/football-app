@@ -143,9 +143,9 @@ export default function TeamsPage() {
           const res = await fetch(`/api/teams/${id}`);
           const jsonData = await res.json();
           setTeamsData(jsonData);
-          setLoadingTeams(false);
         } catch (error) {
           console.error("Error fetching team data:", error);
+        } finally {
           setLoadingTeams(false);
         }
       }
@@ -164,10 +164,10 @@ export default function TeamsPage() {
           } else {
             setTeamsMatchesData([]);
           }
-          setLoadingTeamMatches(false);
         } catch (error) {
           console.error("Error fetching matches data:", error);
           setTeamsMatchesData([]);
+        } finally {
           setLoadingTeamMatches(false);
         }
       }
@@ -217,11 +217,9 @@ export default function TeamsPage() {
       setCurrentPage(currentPage - 1);
     }
   };
-
   const handleFirstPage = () => {
     setCurrentPage(1);
   };
-
   const handleTabClick = (tab: "players" | "matches") => {
     setActiveTab(tab);
   };
@@ -276,7 +274,7 @@ export default function TeamsPage() {
       <Header></Header>
       {loadingTeams || loadingTeamMatches ? (
         <p className={`${c["nodata"]} ${c["nodata-center"]}`}>Loading...</p>
-      ) : teamsData && teamsMatchesData.length > 0 ? (
+      ) : teamsData ? (
         <>
           <main className={s["teamDetails"]}>
             <div className={c["heading"]}>
@@ -327,20 +325,30 @@ export default function TeamsPage() {
               {activeTab === "players" && teamsData.squad ? (
                 <div className={s["players"]}>
                   <h3>所属選手</h3>
-                  <label htmlFor="positionFilter">ポジションでフィルター</label>
-                  <select
-                    id="positionFilter"
-                    onChange={handleFilterChange}
-                    className={c["filter"]}
-                  >
-                    <option value="">ALL</option>
-                    <option value="Goalkeeper">Goalkeeper</option>
-                    <option value="Defence,Defender">Defence, Defender</option>
-                    <option value="Midfield,Midfielder">
-                      Midfield, Midfielder
-                    </option>
-                    <option value="Offence,Forward">Offence, Forward</option>
-                  </select>
+                  <div className={c["func"]}>
+                    <div className={c["func__filter"]}>
+                      <label htmlFor="positionFilter">
+                        ポジションでフィルター
+                      </label>
+                      <select
+                        id="positionFilter"
+                        onChange={handleFilterChange}
+                        className={c["func__filter__select"]}
+                      >
+                        <option value="">ALL</option>
+                        <option value="Goalkeeper">Goalkeeper</option>
+                        <option value="Defence,Defender">
+                          Defence, Defender
+                        </option>
+                        <option value="Midfield,Midfielder">
+                          Midfield, Midfielder
+                        </option>
+                        <option value="Offence,Forward">
+                          Offence, Forward
+                        </option>
+                      </select>
+                    </div>
+                  </div>
                   <table className={s["players__table"]}>
                     <thead>
                       <tr>
@@ -378,181 +386,199 @@ export default function TeamsPage() {
               ) : activeTab === "matches" ? (
                 <div className={c["matches"]}>
                   <h3 className={c["matches__title"]}>試合結果</h3>
-                  <div>
-                    <label htmlFor="competitionFilter">
-                      大会・リーグでフィルター
-                    </label>
-                    <select
-                      id="competitionFilter"
-                      className={c["filter"]}
-                      onChange={handleFilterCompetitionChange}
-                    >
-                      <option value="">ALL</option>
-                      {Array.from(
-                        new Set(
-                          teamsMatchesData.map((match) => match.competition.id)
-                        )
-                      ).map((competitionId) => {
-                        const competition = teamsMatchesData.find(
-                          (match) => match.competition.id === competitionId
-                        )?.competition;
-                        return (
-                          <option key={competitionId} value={competitionId}>
-                            {competition?.name}
-                          </option>
-                        );
-                      }).length > 1
-                        ? Array.from(
-                            new Set(
-                              teamsMatchesData.map(
-                                (match) => match.competition.id
+                  {teamsMatchesData.length > 0 ? (
+                    <>
+                      <div className={c["func"]}>
+                        <div className={c["func__filter"]}>
+                          <label htmlFor="competitionFilter">
+                            大会・リーグでフィルター
+                          </label>
+                          <select
+                            id="competitionFilter"
+                            className={c["func__filter__select"]}
+                            onChange={handleFilterCompetitionChange}
+                          >
+                            <option value="">ALL</option>
+                            {Array.from(
+                              new Set(
+                                teamsMatchesData.map(
+                                  (match) => match.competition.id
+                                )
                               )
-                            )
-                          ).map((competitionId) => {
-                            const competition = teamsMatchesData.find(
-                              (match) => match.competition.id === competitionId
-                            )?.competition;
-                            return (
-                              <option key={competitionId} value={competitionId}>
-                                {competition?.name}
-                              </option>
-                            );
-                          })
-                        : null}
-                    </select>
-                    <Button
-                      onClick={() => setIsReversed(!isReversed)}
-                      className={c["reverseButton"]}
-                    >
-                      {isReversed ? "古い順にする" : "最新順にする"}
-                    </Button>
-                  </div>
-                  <table className={c["matches__table"]}>
-                    <thead>
-                      <tr>
-                        <th>日時</th>
-                        <th>ホームチーム</th>
-                        <th>スコア</th>
-                        <th>アウェイチーム</th>
-                        <th>大会・リーグ</th>
-                        <th>ステージ</th>
-                        <th>グループ</th>
-                        <th>Youtube</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {currentMatches.map((matchesData) => {
-                        return (
-                          <tr key={matchesData.id}>
-                            <td>{formatDate(matchesData.utcDate)}</td>
-                            <td>
-                              <a
-                                onClick={() =>
-                                  navigateTeam(matchesData.homeTeam?.id ?? 0)
-                                }
-                                className={c["matches__teamOuter"]}
-                              >
-                                <ImageWithFallback
-                                  src={matchesData.homeTeam?.crest ?? ""}
-                                  alt={matchesData.homeTeam?.name ?? "N/A"}
-                                  width={30}
-                                  height={30}
-                                />
-                                <p>{matchesData.homeTeam?.name ?? "N/A"}</p>
-                              </a>
-                            </td>
-                            <td>
-                              {matchesData.score?.fullTime?.home}
-                              {"-"}
-                              {matchesData.score?.fullTime?.away}
-                            </td>
-                            <td>
-                              <a
-                                onClick={() =>
-                                  navigateTeam(matchesData.awayTeam?.id ?? 0)
-                                }
-                                className={c["matches__teamOuter"]}
-                              >
-                                <ImageWithFallback
-                                  src={matchesData.awayTeam?.crest ?? ""}
-                                  alt={matchesData.awayTeam?.name ?? "N/A"}
-                                  width={30}
-                                  height={30}
-                                />
-                                <p>{matchesData.awayTeam?.name ?? "N/A"}</p>
-                              </a>
-                            </td>
-                            <td>
-                              <a
-                                onClick={() =>
-                                  navigateLeague(
-                                    matchesData.competition?.id ?? 0
+                            ).map((competitionId) => {
+                              const competition = teamsMatchesData.find(
+                                (match) =>
+                                  match.competition.id === competitionId
+                              )?.competition;
+                              return (
+                                <option
+                                  key={competitionId}
+                                  value={competitionId}
+                                >
+                                  {competition?.name}
+                                </option>
+                              );
+                            }).length > 1
+                              ? Array.from(
+                                  new Set(
+                                    teamsMatchesData.map(
+                                      (match) => match.competition.id
+                                    )
                                   )
-                                }
-                                className={s["matches__competition"]}
-                              >
-                                <ImageWithFallback
-                                  src={matchesData.competition?.emblem ?? ""}
-                                  alt={matchesData.competition?.name ?? "N/A"}
-                                  width={30}
-                                  height={30}
-                                />
-                                <p>{matchesData.competition?.name ?? "N/A"}</p>
-                                <p className={c["matches__seazon"]}>
-                                  {formatSeason(
-                                    matchesData.season?.startDate ?? "",
-                                    matchesData.season?.endDate ?? ""
-                                  )}
-                                </p>
-                              </a>
-                            </td>
-                            <td>{matchesData.stage}</td>
-                            <td>{matchesData.group ?? "-"}</td>
-                            <td>
-                              <Link
-                                href={getYouTubeLink(matchesData)}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              >
-                                <ImageWithFallback
-                                  src={"/yt_logo_rgb_light.png"}
-                                  alt={"youtube logo"}
-                                  width={64}
-                                  height={14}
-                                ></ImageWithFallback>
-                              </Link>
-                            </td>
+                                ).map((competitionId) => {
+                                  const competition = teamsMatchesData.find(
+                                    (match) =>
+                                      match.competition.id === competitionId
+                                  )?.competition;
+                                  return (
+                                    <option
+                                      key={competitionId}
+                                      value={competitionId}
+                                    >
+                                      {competition?.name}
+                                    </option>
+                                  );
+                                })
+                              : null}
+                          </select>
+                        </div>
+                        <Button
+                          onClick={() => setIsReversed(!isReversed)}
+                          className={c["func__sortButton"]}
+                        >
+                          {isReversed ? "古い順にする" : "最新順にする"}
+                        </Button>
+                      </div>
+                      <table className={c["matches__table"]}>
+                        <thead>
+                          <tr>
+                            <th>日時</th>
+                            <th>ホームチーム</th>
+                            <th>スコア</th>
+                            <th>アウェイチーム</th>
+                            <th>大会・リーグ</th>
+                            <th>ステージ</th>
+                            <th>グループ</th>
+                            <th>Youtube</th>
                           </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                  <p
-                    className={c["page__text"]}
-                  >{`${currentPage}/${totalPages}`}</p>
-                  <div className={c["pagination"]}>
-                    <Button
-                      onClick={handleFirstPage}
-                      disabled={currentPage === 1}
-                      className={c["pagination__btn"]}
-                    >
-                      First Page
-                    </Button>
-                    <Button
-                      onClick={handlePreviousPage}
-                      disabled={currentPage === 1}
-                      className={c["pagination__btn"]}
-                    >
-                      Previous
-                    </Button>
-                    <Button
-                      onClick={handleNextPage}
-                      disabled={currentPage >= totalPages}
-                      className={c["pagination__btn"]}
-                    >
-                      Next
-                    </Button>
-                  </div>
+                        </thead>
+                        <tbody>
+                          {currentMatches.map((matchesData) => (
+                            <tr key={matchesData.id}>
+                              <td>{formatDate(matchesData.utcDate)}</td>
+                              <td>
+                                <a
+                                  onClick={() =>
+                                    navigateTeam(matchesData.homeTeam?.id ?? 0)
+                                  }
+                                  className={c["matches__teamOuter"]}
+                                >
+                                  <ImageWithFallback
+                                    src={matchesData.homeTeam?.crest ?? ""}
+                                    alt={matchesData.homeTeam?.name ?? "N/A"}
+                                    width={30}
+                                    height={30}
+                                  />
+                                  <p>{matchesData.homeTeam?.name ?? "N/A"}</p>
+                                </a>
+                              </td>
+                              <td>
+                                {matchesData.score?.fullTime?.home}
+                                {"-"}
+                                {matchesData.score?.fullTime?.away}
+                              </td>
+                              <td>
+                                <a
+                                  onClick={() =>
+                                    navigateTeam(matchesData.awayTeam?.id ?? 0)
+                                  }
+                                  className={c["matches__teamOuter"]}
+                                >
+                                  <ImageWithFallback
+                                    src={matchesData.awayTeam?.crest ?? ""}
+                                    alt={matchesData.awayTeam?.name ?? "N/A"}
+                                    width={30}
+                                    height={30}
+                                  />
+                                  <p>{matchesData.awayTeam?.name ?? "N/A"}</p>
+                                </a>
+                              </td>
+                              <td>
+                                <a
+                                  onClick={() =>
+                                    navigateLeague(
+                                      matchesData.competition?.id ?? 0
+                                    )
+                                  }
+                                  className={c["matches__competition"]}
+                                >
+                                  <ImageWithFallback
+                                    src={matchesData.competition?.emblem ?? ""}
+                                    alt={matchesData.competition?.name ?? "N/A"}
+                                    width={30}
+                                    height={30}
+                                  />
+                                  <p>
+                                    {matchesData.competition?.name ?? "N/A"}
+                                  </p>
+                                  <p className={c["matches__seazon"]}>
+                                    {formatSeason(
+                                      matchesData.season?.startDate ?? "",
+                                      matchesData.season?.endDate ?? ""
+                                    )}
+                                  </p>
+                                </a>
+                              </td>
+                              <td>{matchesData.stage}</td>
+                              <td>{matchesData.group ?? "-"}</td>
+                              <td>
+                                <Link
+                                  href={getYouTubeLink(matchesData)}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                >
+                                  <ImageWithFallback
+                                    src={"/yt_logo_rgb_light.png"}
+                                    alt={"youtube logo"}
+                                    width={64}
+                                    height={14}
+                                  ></ImageWithFallback>
+                                </Link>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                      <p
+                        className={c["page__text"]}
+                      >{`${currentPage}/${totalPages}`}</p>
+                      <div className={c["pagination"]}>
+                        <Button
+                          onClick={handleFirstPage}
+                          disabled={currentPage === 1}
+                          className={c["pagination__btn"]}
+                        >
+                          First Page
+                        </Button>
+                        <Button
+                          onClick={handlePreviousPage}
+                          disabled={currentPage === 1}
+                          className={c["pagination__btn"]}
+                        >
+                          Previous
+                        </Button>
+                        <Button
+                          onClick={handleNextPage}
+                          disabled={currentPage >= totalPages}
+                          className={c["pagination__btn"]}
+                        >
+                          Next
+                        </Button>
+                      </div>
+                    </>
+                  ) : (
+                    <p className={c["matches__nodata"]}>NO DATA</p>
+                  )}
                 </div>
               ) : null}
             </div>

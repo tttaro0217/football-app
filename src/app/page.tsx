@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import ImageWithFallback from "../components/ImageWithFallback";
+import { RiHomeSmileFill } from "react-icons/ri";
 import s from "./page.module.scss";
 import c from "../components/common.module.scss";
 import { useRouter } from "next/navigation";
@@ -74,7 +75,10 @@ export default function Page() {
       <Header />
       <main className={s["leagueLists"]}>
         <div>
-          <h2 className={s["leagueLists__title"]}>LEAGUE LIST</h2>
+          <div className={s["leagueLists__title"]}>
+            <RiHomeSmileFill className={s["leagueLists__title__icon"]} />
+            <h2 className={s["leagueLists__title__text"]}>LEAGUE LIST</h2>
+          </div>
           {loadingList ? (
             <p className={`${c["nodata"]}`}>Loading...</p>
           ) : leagueListDatas.length > 0 ? (

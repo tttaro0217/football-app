@@ -2,10 +2,25 @@
   padding: 100px;
 
   &__title {
-    text-align: center;
-    color: #223a70;
-    font-size: 30px;
     margin: 30px 0 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    &__icon {
+      background: none;
+      border: none;
+      font-size: 40px;
+      color: #3aabd2;
+      transition: color 0.3s ease;
+    }
+
+    &__text {
+      text-align: center;
+      color: #3aabd2;
+      font-size: 30px;
+    }
   }
 
   &__items {

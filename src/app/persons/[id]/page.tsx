@@ -71,6 +71,8 @@ export default function PersonsPage() {
   const [loadingPersons, setLoadingPersons] = useState(true);
   const [loadingPersonMatches, setLoadingPersonMatches] = useState(true);
 
+  const [isReversed, setIsReversed] = useState<boolean>(false);
+
   const itemsPerPage = 10;
   const { id } = useParams();
 
@@ -175,35 +177,30 @@ export default function PersonsPage() {
     setCurrentPage(1); // Reset to first page on filter change
   };
 
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
   const filteredMatches = filterLeagueId
     ? personsMatchesData.filter(
         (match) => match.competition.id === filterLeagueId
       )
     : personsMatchesData;
-
+  //試合結果の順番をreverse
+  const sortedMatches = isReversed
+    ? filteredMatches.slice().reverse()
+    : filteredMatches;
+  const currentMatches = sortedMatches.slice(startIndex, endIndex);
   const totalPages = Math.ceil(filteredMatches.length / itemsPerPage);
-
-  // Ensure currentPage is within the valid range
-  if (currentPage > totalPages && totalPages > 0) {
-    setCurrentPage(totalPages);
-  }
-
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentMatches = filteredMatches.slice(startIndex, endIndex);
 
   const handleNextPage = () => {
     if (endIndex < filteredMatches.length) {
       setCurrentPage(currentPage + 1);
     }
   };
-
   const handlePreviousPage = () => {
     if (startIndex > 0) {
       setCurrentPage(currentPage - 1);
     }
   };
-
   const handleFirstPage = () => {
     setCurrentPage(1);
   };
@@ -289,33 +286,41 @@ export default function PersonsPage() {
               <h3 className={c["matches__title"]}>試合結果</h3>
               {personsMatchesData.length > 0 ? (
                 <>
-                  <div>
-                    <label htmlFor="leagueFilter">
-                      大会・リーグでフィルター：
-                    </label>
-                    <select
-                      id="leagueFilter"
-                      onChange={handleFilterLeagueChange}
-                      className={c["filter"]}
-                    >
-                      <option value="">全ての大会・リーグ</option>
-                      {Array.from(
-                        new Set(
-                          personsMatchesData.map(
-                            (match) => match.competition.id
+                  <div className={c["func"]}>
+                    <div className={c["func__filter"]}>
+                      <label htmlFor="leagueFilter">
+                        大会・リーグでフィルター：
+                      </label>
+                      <select
+                        id="leagueFilter"
+                        onChange={handleFilterLeagueChange}
+                        className={c["func__filter__select"]}
+                      >
+                        <option value="">全ての大会・リーグ</option>
+                        {Array.from(
+                          new Set(
+                            personsMatchesData.map(
+                              (match) => match.competition.id
+                            )
                           )
-                        )
-                      ).map((id) => {
-                        const league = personsMatchesData.find(
-                          (match) => match.competition.id === id
-                        )?.competition;
-                        return (
-                          <option key={id} value={id}>
-                            {league?.name ?? "N/A"}
-                          </option>
-                        );
-                      })}
-                    </select>
+                        ).map((id) => {
+                          const league = personsMatchesData.find(
+                            (match) => match.competition.id === id
+                          )?.competition;
+                          return (
+                            <option key={id} value={id}>
+                              {league?.name ?? "N/A"}
+                            </option>
+                          );
+                        })}
+                      </select>
+                    </div>
+                    <Button
+                      onClick={() => setIsReversed(!isReversed)}
+                      className={c["func__sortButton"]}
+                    >
+                      {isReversed ? "最新順にする" : "古い順にする"}
+                    </Button>
                   </div>
                   <table className={c["matches__table"]}>
                     <thead>

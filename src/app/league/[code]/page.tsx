@@ -2,12 +2,14 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { GiChampions } from "react-icons/gi";
 import ImageWithFallback from "../../../components/ImageWithFallback";
 import s from "./page.module.scss";
 import c from "../../../components/common.module.scss";
 import Header from "../../../components/Header";
 import Button from "../../../components/Button";
 import ScrollButton from "../../../components/ScrollButton";
+import { Duplex } from "stream";
 
 type LeagueData = {
   id: number;
@@ -98,6 +100,8 @@ export default function LeaguePage() {
   const [loadingTeams, setLoadingTeams] = useState(true);
   const [loadingScores, setLoadingScores] = useState(true);
   const [loadingMatches, setLoadingMatches] = useState(true);
+
+  const [isReversed, setIsReversed] = useState<boolean>(false);
 
   const itemsPerPage = 10;
   const { code } = useParams(); // useParamsを使ってパスパラメータを取得
@@ -208,7 +212,13 @@ export default function LeaguePage() {
       )
     : matchesDatas;
 
-  const currentMatches = filteredMatches.slice(startIndex, endIndex);
+  //試合結果の順番をreverse
+  const sortedMatches = isReversed
+    ? filteredMatches.slice().reverse()
+    : filteredMatches;
+
+  const currentMatches =
+    sortedMatches.length > 0 ? sortedMatches.slice(startIndex, endIndex) : [];
   const totalPages = Math.ceil(filteredMatches.length / itemsPerPage);
 
   const handleNextPage = () => {
@@ -216,13 +226,11 @@ export default function LeaguePage() {
       setCurrentPage(currentPage + 1);
     }
   };
-
   const handlePreviousPage = () => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
     }
   };
-
   const handleFirstPage = () => {
     setCurrentPage(1);
   };
@@ -266,9 +274,20 @@ export default function LeaguePage() {
             leagueData.currentSeason?.startDate ?? "N/A"
           } ~ ${leagueData.currentSeason?.endDate ?? "N/A"}`}</p>
           {leagueData.currentSeason?.winner ? (
-            <p
-              className={s["leagueDetails__season"]}
-            >{`優勝: ${leagueData.currentSeason.winner.name}`}</p>
+            <div className={s["leagueDetails__winner"]}>
+              <GiChampions className={s["leagueDetails__winner__icon"]} />
+              <div className={s["leagueDetails__winner__team"]}>
+                <ImageWithFallback
+                  src={leagueData.currentSeason.winner.crest}
+                  alt={leagueData.name}
+                  width={30}
+                  height={30}
+                />
+                <p
+                  className={s["leagueDetails__winner__text"]}
+                >{`${leagueData.currentSeason.winner.name}`}</p>
+              </div>
+            </div>
           ) : null}
           <div className={s["tabs"]}>
             <Button
@@ -347,7 +366,7 @@ export default function LeaguePage() {
                     </tbody>
                   </table>
                 ) : (
-                  <p className={s["leagueDetails__nodata"]}>NO DATA</p>
+                  <p className={c["nodata"]}>NO DATA</p>
                 )}
               </div>
             ) : activeTab === "matches" ? (
@@ -355,20 +374,28 @@ export default function LeaguePage() {
                 <h3>試合結果</h3>
                 {matchesDatas.length > 0 ? (
                   <>
-                    <div>
-                      <label htmlFor="teamFilter">チームでフィルター</label>
-                      <select
-                        id="teamFilter"
-                        className={c["filter"]}
-                        onChange={handleFilterTeamChange}
+                    <div className={c["func"]}>
+                      <div className={c["func__filter"]}>
+                        <label htmlFor="teamFilter">チームでフィルター</label>
+                        <select
+                          id="teamFilter"
+                          className={c["func__filter__select"]}
+                          onChange={handleFilterTeamChange}
+                        >
+                          <option value="">ALL</option>
+                          {teamsData.map((team) => (
+                            <option key={team.id} value={team.id}>
+                              {team.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <Button
+                        onClick={() => setIsReversed(!isReversed)}
+                        className={c["func__sortButton"]}
                       >
-                        <option value="">ALL</option>
-                        {teamsData.map((team) => (
-                          <option key={team.id} value={team.id}>
-                            {team.name}
-                          </option>
-                        ))}
-                      </select>
+                        {isReversed ? "古い順にする" : "最新順にする"}
+                      </Button>
                     </div>
                     <table className={c["matches__table"]}>
                       <thead>
@@ -466,7 +493,7 @@ export default function LeaguePage() {
                     </div>
                   </>
                 ) : (
-                  <p className={s["leagueDetails__nodata"]}>NO DATA</p>
+                  <p className={c["nodata"]}>NO DATA</p>
                 )}
               </div>
             ) : (

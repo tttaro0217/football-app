@@ -72,7 +72,7 @@ export default function FavoritesPage() {
       <Header />
       <main className={s["favorite"]}>
         <div className={s["favorite__title"]}>
-          <FaHeart className={s["favorite__title__button"]} />
+          <FaHeart className={s["favorite__title__icon"]} />
           <h2 className={s["favorite__title__text"]}>FAVORITE LIST</h2>
         </div>
         <div>
