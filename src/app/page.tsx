@@ -1,5 +1,3 @@
-//src/app/page.tsx
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -24,13 +22,14 @@ export default function Page() {
   const [leagueListDatas, setLeagueListDatas] = useState<LeagueData[]>([]);
   const [leagueCode, setLeagueCode] = useState("");
   const [loadingList, setLoadingList] = useState(true);
-  const [loadingCode, setLoadingCode] = useState(true);
+  const [loadingCode, setLoadingCode] = useState(false);
 
   const router = useRouter();
   const navigateToLeague = (code: string) => {
     setLeagueCode(code);
     router.push(`league/${code}`);
   };
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -39,42 +38,46 @@ export default function Page() {
     async function fetchLeagueList() {
       try {
         const res = await fetch(`/api/leagueList`);
+        if (!res.ok) throw new Error("Failed to fetch league list");
         const jsonData = await res.json();
-        setLeagueListDatas(jsonData.data.competitions);
+        setLeagueListDatas(jsonData.data.competitions || []);
+        setLoadingList(false);
       } catch (error) {
-        console.error("Errorだよ", error);
+        console.error("Error fetching league list:", error);
+        setLoadingList(false);
       }
     }
     fetchLeagueList();
-    setLoadingList(false); // データ取得完了後にfalseになる falseになったら中身のデータを表示
   }, []);
 
-  console.log("leagueListDatas", leagueListDatas);
-  console.log("leagueCode", leagueCode);
-
   useEffect(() => {
+    if (!leagueCode) return;
+
     async function fetchLeagueCode() {
       try {
+        setLoadingCode(true);
         const res = await fetch(`/api/league/${leagueCode}`);
+        if (!res.ok) throw new Error("Failed to fetch league data");
         const jsonData = await res.json();
         console.log("Fetched league data:", jsonData);
+        setLoadingCode(false);
       } catch (error) {
         console.error("Error fetching league data:", error);
+        setLoadingCode(false);
       }
     }
     fetchLeagueCode();
-    setLoadingCode(false);
   }, [leagueCode]);
 
   return (
     <>
-      <Header></Header>
+      <Header />
       <main className={s["leagueLists"]}>
         <div>
           <h2 className={s["leagueLists__title"]}>LEAGUE LIST</h2>
-          {loadingList && loadingCode ? (
+          {loadingList ? (
             <p className={`${c["nodata"]}`}>Loading...</p>
-          ) : leagueListDatas ? (
+          ) : leagueListDatas.length > 0 ? (
             <ul className={s["leagueLists__items"]}>
               {leagueListDatas.map((leagueListData) => (
                 <li

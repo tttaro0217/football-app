@@ -61,8 +61,8 @@ type FavoritePerson = {
 };
 
 export default function PersonsPage() {
-  const [pesonsData, setPesonsData] = useState<PersonData | null>(null);
-  const [pesonsMatchesData, setPesonsMatchesData] = useState<MatchData[]>([]);
+  const [personsData, setPersonsData] = useState<PersonData | null>(null);
+  const [personsMatchesData, setPersonsMatchesData] = useState<MatchData[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [teamId, setTeamId] = useState<number | null>(null);
   const [personId, setPersonId] = useState<number | null>(null);
@@ -123,11 +123,11 @@ export default function PersonsPage() {
           const res = await fetch(`/api/persons/${id}`);
           if (!res.ok) throw new Error("Failed to fetch person data");
           const jsonData = await res.json();
-          setPesonsData(jsonData);
+          setPersonsData(jsonData);
           setLoadingPersons(false);
         } catch (error) {
           console.error("Error fetching person data:", error);
-          setPesonsData(null);
+          setPersonsData(null);
           setLoadingPersons(false);
         }
       }
@@ -142,11 +142,11 @@ export default function PersonsPage() {
           const res = await fetch(`/api/persons/${id}/matches`);
           if (!res.ok) throw new Error("Failed to fetch person matches data");
           const jsonData = await res.json();
-          setPesonsMatchesData(jsonData.matches);
+          setPersonsMatchesData(jsonData.matches);
           setLoadingPersonMatches(false);
         } catch (error) {
           console.error("Error fetching person matches data:", error);
-          setPesonsMatchesData([]);
+          setPersonsMatchesData([]);
           setLoadingPersonMatches(false);
         }
       }
@@ -154,8 +154,8 @@ export default function PersonsPage() {
     fetchPersonsMatchesData();
   }, [id]);
 
-  console.log("pesonsData", pesonsData);
-  console.log("pesonsMatchesData", pesonsMatchesData);
+  console.log("personsData", personsData);
+  console.log("personsMatchesData", personsMatchesData);
 
   const router = useRouter();
   const navigateTeams = (id: number) => {
@@ -176,10 +176,10 @@ export default function PersonsPage() {
   };
 
   const filteredMatches = filterLeagueId
-    ? pesonsMatchesData.filter(
+    ? personsMatchesData.filter(
         (match) => match.competition.id === filterLeagueId
       )
-    : pesonsMatchesData;
+    : personsMatchesData;
 
   const totalPages = Math.ceil(filteredMatches.length / itemsPerPage);
 
@@ -237,7 +237,7 @@ export default function PersonsPage() {
       <Header></Header>
       {loadingPersons || loadingPersonMatches ? (
         <p className={`${c["nodata"]} ${c["nodata-center"]}`}>Loading...</p>
-      ) : pesonsData ? (
+      ) : personsData ? (
         <>
           <main className={s["person"]}>
             <h2 className={s["person__title"]}>選手情報</h2>
@@ -245,21 +245,21 @@ export default function PersonsPage() {
               <div className={c["title"]}>
                 <div className={c["title__emblem"]}>
                   <ImageWithFallback
-                    src={pesonsData.currentTeam.crest}
-                    alt={pesonsData.name}
+                    src={personsData.currentTeam?.crest ?? ""}
+                    alt={personsData.name}
                     width={50}
                     height={50}
                   />
                 </div>
-                <h2 className={c["title__text"]}>{pesonsData.name}</h2>
+                <h2 className={c["title__text"]}>{personsData.name}</h2>
                 <a
                   onClick={() =>
                     isFavoritePerson(Number(id))
                       ? removeFavoritePerson(Number(id))
                       : addFavoritePerson(
                           Number(id),
-                          pesonsData.name,
-                          pesonsData.currentTeam.crest
+                          personsData.name,
+                          personsData.currentTeam?.crest ?? ""
                         )
                   }
                   className={`${c["favoriteButton"]} ${
@@ -272,18 +272,22 @@ export default function PersonsPage() {
                 </a>
               </div>
             </div>
-            <p className={s["person__position"]}>{pesonsData.position}</p>
+            <p className={s["person__position"]}>{personsData.position}</p>
             <div className={s["person__team"]}>
               <a
                 className={s["person__team__currentTeam"]}
-                onClick={() => navigateTeams(pesonsData.currentTeam.id)}
+                onClick={() =>
+                  personsData.currentTeam?.id
+                    ? navigateTeams(personsData.currentTeam.id)
+                    : undefined
+                }
               >
-                {pesonsData.currentTeam.name}
+                {personsData.currentTeam?.name ?? "N/A"}
               </a>
             </div>
             <div className={c["matches"]}>
               <h3 className={c["matches__title"]}>試合結果</h3>
-              {pesonsMatchesData.length > 0 ? (
+              {personsMatchesData.length > 0 ? (
                 <>
                   <div>
                     <label htmlFor="leagueFilter">
@@ -297,15 +301,17 @@ export default function PersonsPage() {
                       <option value="">全ての大会・リーグ</option>
                       {Array.from(
                         new Set(
-                          pesonsMatchesData.map((match) => match.competition.id)
+                          personsMatchesData.map(
+                            (match) => match.competition.id
+                          )
                         )
                       ).map((id) => {
-                        const league = pesonsMatchesData.find(
+                        const league = personsMatchesData.find(
                           (match) => match.competition.id === id
                         )?.competition;
                         return (
                           <option key={id} value={id}>
-                            {league?.name}
+                            {league?.name ?? "N/A"}
                           </option>
                         );
                       })}
@@ -331,58 +337,60 @@ export default function PersonsPage() {
                             <td>
                               <div
                                 onClick={() =>
-                                  navigateTeams(matchesData.homeTeam.id)
+                                  navigateTeams(matchesData.homeTeam?.id ?? 0)
                                 }
                                 className={c["matches__teamOuter"]}
                               >
                                 <ImageWithFallback
-                                  src={matchesData.homeTeam.crest}
-                                  alt={matchesData.homeTeam.name}
+                                  src={matchesData.homeTeam?.crest ?? ""}
+                                  alt={matchesData.homeTeam?.name ?? "N/A"}
                                   width={30}
                                   height={30}
                                 />
-                                <p>{matchesData.homeTeam.name}</p>
+                                <p>{matchesData.homeTeam?.name ?? "N/A"}</p>
                               </div>
                             </td>
                             <td>
-                              {matchesData.score.fullTime.home}
+                              {matchesData.score?.fullTime?.home}
                               {"-"}
-                              {matchesData.score.fullTime.away}
+                              {matchesData.score?.fullTime?.away}
                             </td>
                             <td>
                               <div
                                 onClick={() =>
-                                  navigateTeams(matchesData.awayTeam.id)
+                                  navigateTeams(matchesData.awayTeam?.id ?? 0)
                                 }
                                 className={c["matches__teamOuter"]}
                               >
                                 <ImageWithFallback
-                                  src={matchesData.awayTeam.crest}
-                                  alt={matchesData.awayTeam.name}
+                                  src={matchesData.awayTeam?.crest ?? ""}
+                                  alt={matchesData.awayTeam?.name ?? "N/A"}
                                   width={30}
                                   height={30}
                                 />
-                                <p>{matchesData.awayTeam.name}</p>
+                                <p>{matchesData.awayTeam?.name ?? "N/A"}</p>
                               </div>
                             </td>
                             <td>
                               <a
                                 onClick={() =>
-                                  navigateLeague(matchesData.competition.id)
+                                  navigateLeague(
+                                    matchesData.competition?.id ?? 0
+                                  )
                                 }
                                 className={c["matches__competition"]}
                               >
                                 <ImageWithFallback
-                                  src={matchesData.competition.emblem}
-                                  alt={matchesData.competition.name}
+                                  src={matchesData.competition?.emblem ?? ""}
+                                  alt={matchesData.competition?.name ?? "N/A"}
                                   width={30}
                                   height={30}
                                 />
-                                <p>{matchesData.competition.name}</p>
+                                <p>{matchesData.competition?.name ?? "N/A"}</p>
                                 <p className={c["matches__seazon"]}>
                                   {formatSeason(
-                                    matchesData.season.startDate,
-                                    matchesData.season.endDate
+                                    matchesData.season?.startDate ?? "",
+                                    matchesData.season?.endDate ?? ""
                                   )}
                                 </p>
                               </a>
@@ -428,7 +436,7 @@ export default function PersonsPage() {
           </main>
         </>
       ) : (
-        <p className={`${c["nodata"]} ${c["nodata-center"]}`}>NODATA</p>
+        <p className={`${c["nodata"]} ${c["nodata-center"]}`}>NO DATA</p>
       )}
       <ScrollButton onClick={scrollToTop} />
     </>

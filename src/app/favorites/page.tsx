@@ -23,19 +23,16 @@ export default function FavoritesPage() {
   const [loadingPersons, setLoadingPersons] = useState(true);
 
   const router = useRouter();
-  const navigateTeam = (id: number | null) => {
+  const navigateTeam = (id: number) => {
     router.push(`/teams/${id}`);
   };
-  const navigatePerson = (id: number | null) => {
+  const navigatePerson = (id: number) => {
     router.push(`/persons/${id}`);
   };
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  /**
-   * 初期読み込み時、ローカルストレージのデータを取得
-   */
   useEffect(() => {
     const localStorageTeamsData = localStorage.getItem("favoriteTeams");
     const parsedTeamsData = localStorageTeamsData
@@ -43,7 +40,7 @@ export default function FavoritesPage() {
       : [];
     console.log(parsedTeamsData);
     setFavoriteTeams(parsedTeamsData);
-    setLoadingTeams(false); // データ取得完了後にローディング状態を更新
+    setLoadingTeams(false);
   }, []);
 
   useEffect(() => {
@@ -53,7 +50,7 @@ export default function FavoritesPage() {
       : [];
     console.log(parsedPersonsData);
     setFavoritePersons(parsedPersonsData);
-    setLoadingPersons(false); // データ取得完了後にローディング状態を更新
+    setLoadingPersons(false);
   }, []);
 
   const removeFavorite = (id: number, type: "team" | "person") => {

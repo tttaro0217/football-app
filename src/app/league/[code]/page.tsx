@@ -132,7 +132,7 @@ export default function LeaguePage() {
         try {
           const res = await fetch(`/api/league/${code}/teams`);
           const jsonData = await res.json();
-          setTeamsData(jsonData.teams);
+          setTeamsData(jsonData.teams || []);
           setLoadingTeams(false);
         } catch (error) {
           console.error("Error fetching teams data:", error);
@@ -149,7 +149,7 @@ export default function LeaguePage() {
         try {
           const res = await fetch(`/api/league/${code}/scores`);
           const jsonData = await res.json();
-          setScoresDatas(jsonData.scorers);
+          setScoresDatas(jsonData.scorers || []);
           setLoadingScores(false);
         } catch (error) {
           console.error("Error fetching scores data:", error);
@@ -166,7 +166,7 @@ export default function LeaguePage() {
         try {
           const res = await fetch(`/api/league/${code}/matches`);
           const jsonData = await res.json();
-          setMatchesDatas(jsonData.matches);
+          setMatchesDatas(jsonData.matches || []);
           setLoadingMatches(false);
         } catch (error) {
           console.error("Error fetching matches data:", error);
@@ -206,7 +206,7 @@ export default function LeaguePage() {
           match.homeTeam.id === filterMatchId ||
           match.awayTeam.id === filterMatchId
       )
-    : matchesDatas ?? [];
+    : matchesDatas;
 
   const currentMatches = filteredMatches.slice(startIndex, endIndex);
   const totalPages = Math.ceil(filteredMatches.length / itemsPerPage);
@@ -262,10 +262,10 @@ export default function LeaguePage() {
               {leagueData.name} / {leagueData.area?.name ?? ""}
             </h2>
           </div>
-          <p
-            className={s["leagueDetails__season"]}
-          >{`シーズン: ${leagueData.currentSeason.startDate} ~ ${leagueData.currentSeason.endDate}`}</p>
-          {leagueData.currentSeason.winner ? (
+          <p className={s["leagueDetails__season"]}>{`シーズン: ${
+            leagueData.currentSeason?.startDate ?? "N/A"
+          } ~ ${leagueData.currentSeason?.endDate ?? "N/A"}`}</p>
+          {leagueData.currentSeason?.winner ? (
             <p
               className={s["leagueDetails__season"]}
             >{`優勝: ${leagueData.currentSeason.winner.name}`}</p>
@@ -309,29 +309,33 @@ export default function LeaguePage() {
                     </thead>
                     <tbody>
                       {scoresDatas.map((scoresData, index) => (
-                        <tr key={scoresData.player.id}>
+                        <tr key={scoresData.player?.id ?? index}>
                           <td>{index + 1}</td>
                           <td>
                             <a
                               className={s["btn"]}
                               onClick={() =>
-                                navigatePersons(scoresData.player.id)
+                                navigatePersons(scoresData.player?.id ?? 0)
                               }
                             >
-                              {scoresData.player.name}
+                              {scoresData.player?.name ?? "N/A"}
                             </a>
                           </td>
                           <td
                             className={s["btn"]}
-                            onClick={() => navigateTeams(scoresData.team.id)}
+                            onClick={() =>
+                              navigateTeams(scoresData.team?.id ?? 0)
+                            }
                           >
                             <ImageWithFallback
-                              src={scoresData.team.crest}
-                              alt={scoresData.team.name}
+                              src={scoresData.team?.crest ?? ""}
+                              alt={scoresData.team?.name ?? "N/A"}
                               width={30}
                               height={30}
                             />
-                            <p className={s["btn"]}>{scoresData.team.name}</p>
+                            <p className={s["btn"]}>
+                              {scoresData.team?.name ?? "N/A"}
+                            </p>
                           </td>
                           <td>{`${scoresData.goals} (${
                             scoresData.penalties ?? 0
@@ -389,38 +393,38 @@ export default function LeaguePage() {
                               <td>
                                 <div
                                   onClick={() =>
-                                    navigateTeams(matchesData.homeTeam.id)
+                                    navigateTeams(matchesData.homeTeam?.id ?? 0)
                                   }
                                   className={c["matches__teamOuter"]}
                                 >
                                   <ImageWithFallback
-                                    src={matchesData.homeTeam.crest}
-                                    alt={matchesData.homeTeam.name}
+                                    src={matchesData.homeTeam?.crest ?? ""}
+                                    alt={matchesData.homeTeam?.name ?? "N/A"}
                                     width={30}
                                     height={30}
                                   />
-                                  <p>{matchesData.homeTeam.name}</p>
+                                  <p>{matchesData.homeTeam?.name ?? "N/A"}</p>
                                 </div>
                               </td>
                               <td>
-                                {matchesData.score.fullTime.home}
+                                {matchesData.score?.fullTime?.home}
                                 {"-"}
-                                {matchesData.score.fullTime.away}
+                                {matchesData.score?.fullTime?.away}
                               </td>
                               <td>
                                 <div
                                   onClick={() =>
-                                    navigateTeams(matchesData.awayTeam.id)
+                                    navigateTeams(matchesData.awayTeam?.id ?? 0)
                                   }
                                   className={c["matches__teamOuter"]}
                                 >
                                   <ImageWithFallback
-                                    src={matchesData.awayTeam.crest}
-                                    alt={matchesData.awayTeam.name}
+                                    src={matchesData.awayTeam?.crest ?? ""}
+                                    alt={matchesData.awayTeam?.name ?? "N/A"}
                                     width={30}
                                     height={30}
                                   />
-                                  <p>{matchesData.awayTeam.name}</p>
+                                  <p>{matchesData.awayTeam?.name ?? "N/A"}</p>
                                 </div>
                               </td>
                               {leagueData.type === "CUP" && (

@@ -95,8 +95,6 @@ export default function TeamsPage() {
     return [];
   });
 
-  console.log(favoriteTeams);
-
   useEffect(() => {
     if (typeof window !== "undefined") {
       localStorage.setItem("favoriteTeams", JSON.stringify(favoriteTeams));
@@ -145,13 +143,14 @@ export default function TeamsPage() {
           const res = await fetch(`/api/teams/${id}`);
           const jsonData = await res.json();
           setTeamsData(jsonData);
+          setLoadingTeams(false);
         } catch (error) {
           console.error("Error fetching team data:", error);
+          setLoadingTeams(false);
         }
       }
     }
     fetchTeamsData();
-    setLoadingTeams(false);
   }, [id]);
 
   useEffect(() => {
@@ -272,9 +271,6 @@ export default function TeamsPage() {
     )}`;
   };
 
-  console.log("teamsMatchesData", teamsMatchesData);
-  console.log("teamsData", teamsData);
-
   return (
     <>
       <Header></Header>
@@ -328,7 +324,7 @@ export default function TeamsPage() {
               </Button>
             </div>
             <div className={s["leagueDetails__content"]}>
-              {teamsData && activeTab === "players" && teamsData.squad ? (
+              {activeTab === "players" && teamsData.squad ? (
                 <div className={s["players"]}>
                   <h3>所属選手</h3>
                   <label htmlFor="positionFilter">ポジションでフィルター</label>
@@ -452,58 +448,60 @@ export default function TeamsPage() {
                             <td>
                               <a
                                 onClick={() =>
-                                  navigateTeam(matchesData.homeTeam.id)
+                                  navigateTeam(matchesData.homeTeam?.id ?? 0)
                                 }
                                 className={c["matches__teamOuter"]}
                               >
                                 <ImageWithFallback
-                                  src={matchesData.homeTeam.crest}
-                                  alt={matchesData.homeTeam.name}
+                                  src={matchesData.homeTeam?.crest ?? ""}
+                                  alt={matchesData.homeTeam?.name ?? "N/A"}
                                   width={30}
                                   height={30}
                                 />
-                                <p>{matchesData.homeTeam.name}</p>
+                                <p>{matchesData.homeTeam?.name ?? "N/A"}</p>
                               </a>
                             </td>
                             <td>
-                              {matchesData.score.fullTime.home}
+                              {matchesData.score?.fullTime?.home}
                               {"-"}
-                              {matchesData.score.fullTime.away}
+                              {matchesData.score?.fullTime?.away}
                             </td>
                             <td>
                               <a
                                 onClick={() =>
-                                  navigateTeam(matchesData.awayTeam.id)
+                                  navigateTeam(matchesData.awayTeam?.id ?? 0)
                                 }
                                 className={c["matches__teamOuter"]}
                               >
                                 <ImageWithFallback
-                                  src={matchesData.awayTeam.crest}
-                                  alt={matchesData.awayTeam.name}
+                                  src={matchesData.awayTeam?.crest ?? ""}
+                                  alt={matchesData.awayTeam?.name ?? "N/A"}
                                   width={30}
                                   height={30}
                                 />
-                                <p>{matchesData.awayTeam.name}</p>
+                                <p>{matchesData.awayTeam?.name ?? "N/A"}</p>
                               </a>
                             </td>
                             <td>
                               <a
                                 onClick={() =>
-                                  navigateLeague(matchesData.competition.id)
+                                  navigateLeague(
+                                    matchesData.competition?.id ?? 0
+                                  )
                                 }
                                 className={s["matches__competition"]}
                               >
                                 <ImageWithFallback
-                                  src={matchesData.competition.emblem}
-                                  alt={matchesData.competition.name}
+                                  src={matchesData.competition?.emblem ?? ""}
+                                  alt={matchesData.competition?.name ?? "N/A"}
                                   width={30}
                                   height={30}
                                 />
-                                <p>{matchesData.competition.name}</p>
+                                <p>{matchesData.competition?.name ?? "N/A"}</p>
                                 <p className={c["matches__seazon"]}>
                                   {formatSeason(
-                                    matchesData.season.startDate,
-                                    matchesData.season.endDate
+                                    matchesData.season?.startDate ?? "",
+                                    matchesData.season?.endDate ?? ""
                                   )}
                                 </p>
                               </a>
@@ -558,25 +556,6 @@ export default function TeamsPage() {
                 </div>
               ) : null}
             </div>
-            {/* <div>
-              <h3>詳細</h3>
-              <p>{`スタジアム：${teamsData.venue}`}</p>
-              <a
-                href={teamsData.website}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                website
-              </a>
-              {teamsData.coach && <p>{`監督：${teamsData.coach.name}`}</p>}
-              <p>
-                監督の契約期間：
-                {`${teamsData.coach.contract.start}~${teamsData.coach.contract.until}`}
-              </p>
-              <p>クラブカラー：{teamsData.clubColors}</p>
-              <a>所属リーグ、大会：{teamsData.runningCompetitions}</a>
-              <p>{}</p>
-            </div> */}
           </main>
         </>
       ) : (
