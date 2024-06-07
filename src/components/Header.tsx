@@ -1,6 +1,7 @@
 "use client";
 import s from "./Header.module.scss";
 import ImageWithFallback from "../components/ImageWithFallback";
+import { FaHeart } from "react-icons/fa";
 
 const Header = () => {
   return (
@@ -9,14 +10,9 @@ const Header = () => {
         <ImageWithFallback src="/home.svg" alt="home" width={30} height={30} />
         <p>HOME</p>
       </a>
-      <a className={s["header__top"]} href="/favorites">
-        <ImageWithFallback
-          src="/favorite.svg"
-          alt="favorite"
-          width={30}
-          height={30}
-        />
-        <p>FAVORITE</p>
+      <a className={s["favorite"]} href="/favorites">
+        <FaHeart className={s["favorite__button"]} />
+        <p className={s["favorite__text"]}>FAVORITE</p>
       </a>
     </header>
   );

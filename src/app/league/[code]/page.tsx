@@ -22,7 +22,7 @@ type LeagueData = {
     endDate: string;
     winner: {
       name: string;
-    };
+    } | null;
   };
   type: string;
 };
@@ -94,6 +94,10 @@ export default function LeaguePage() {
   const [teamId, setTeamId] = useState<number | null>(null);
   const [personrId, setPersonId] = useState<number | null>(null);
   const [filterMatchId, setFilterMatchId] = useState<number | null>(null);
+  const [loadingLeague, setLoadingLeague] = useState(true);
+  const [loadingTeams, setLoadingTeams] = useState(true);
+  const [loadingScores, setLoadingScores] = useState(true);
+  const [loadingMatches, setLoadingMatches] = useState(true);
 
   const itemsPerPage = 10;
   const { code } = useParams(); // useParamsを使ってパスパラメータを取得
@@ -103,7 +107,6 @@ export default function LeaguePage() {
     if (activeTab === "matches") {
       setFilterMatchId(null);
     }
-    console.log("フィルターリセット");
   }, [activeTab]);
 
   useEffect(() => {
@@ -113,8 +116,10 @@ export default function LeaguePage() {
           const res = await fetch(`/api/league/${code}`);
           const jsonData = await res.json();
           setLeagueData(jsonData);
+          setLoadingLeague(false);
         } catch (error) {
           console.error("Error fetching league data:", error);
+          setLoadingLeague(false);
         }
       }
     }
@@ -128,8 +133,10 @@ export default function LeaguePage() {
           const res = await fetch(`/api/league/${code}/teams`);
           const jsonData = await res.json();
           setTeamsData(jsonData.teams);
+          setLoadingTeams(false);
         } catch (error) {
-          console.error("Error fetching league data:", error);
+          console.error("Error fetching teams data:", error);
+          setLoadingTeams(false);
         }
       }
     }
@@ -142,10 +149,11 @@ export default function LeaguePage() {
         try {
           const res = await fetch(`/api/league/${code}/scores`);
           const jsonData = await res.json();
-          console.log(jsonData);
           setScoresDatas(jsonData.scorers);
+          setLoadingScores(false);
         } catch (error) {
-          console.error("Error fetching league data:", error);
+          console.error("Error fetching scores data:", error);
+          setLoadingScores(false);
         }
       }
     }
@@ -159,8 +167,10 @@ export default function LeaguePage() {
           const res = await fetch(`/api/league/${code}/matches`);
           const jsonData = await res.json();
           setMatchesDatas(jsonData.matches);
+          setLoadingMatches(false);
         } catch (error) {
-          console.error("Error fetching league data:", error);
+          console.error("Error fetching matches data:", error);
+          setLoadingMatches(false);
         }
       }
     }
@@ -187,15 +197,6 @@ export default function LeaguePage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  if (!leagueData) {
-    return <p>Loading...</p>;
-  }
-
-  console.log("leagueData", leagueData);
-  console.log("teamsData", teamsData);
-  console.log("scoresDatas", scoresDatas);
-  console.log("matchesDatas", matchesDatas);
-
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
 
@@ -205,7 +206,7 @@ export default function LeaguePage() {
           match.homeTeam.id === filterMatchId ||
           match.awayTeam.id === filterMatchId
       )
-    : matchesDatas;
+    : matchesDatas ?? [];
 
   const currentMatches = filteredMatches.slice(startIndex, endIndex);
   const totalPages = Math.ceil(filteredMatches.length / itemsPerPage);
@@ -233,253 +234,248 @@ export default function LeaguePage() {
   const formatDate = (isoDateString: string) => {
     const date = new Date(isoDateString);
     const year = date.getFullYear();
-    const month = date.getMonth() + 1; // 月は0から始まるから+1
+    const month = date.getMonth() + 1; // 月は0から始まるため+1します
     const day = date.getDate();
     const hours = date.getHours();
-    const minutes = String(date.getMinutes()).padStart(2, "0"); // 分を2桁にフォーマット
+    const minutes = String(date.getMinutes()).padStart(2, "0"); // 分を2桁にフォーマットします
 
     return `${year}/${month}/${day} ${hours}:${minutes}`;
-  };
-
-  const formatSeason = (startDateString: string, endDateString: string) => {
-    const startYear = new Date(startDateString)
-      .getFullYear()
-      .toString()
-      .slice(-2);
-    const endYear = new Date(endDateString).getFullYear().toString().slice(-2);
-    return `${startYear}/${endYear}`;
   };
 
   return (
     <>
       <Header></Header>
-      <main className={s["leagueDetails"]}>
-        <div className={s["title"]}>
-          <div className={s["title__emblem"]}>
-            <ImageWithFallback
-              src={leagueData.emblem}
-              alt={leagueData.name}
-              width={80}
-              height={80}
-            />
+      {loadingLeague || loadingTeams || loadingScores || loadingMatches ? (
+        <p className={c["nodata"]}>Loading...</p>
+      ) : leagueData ? (
+        <main className={s["leagueDetails"]}>
+          <div className={s["title"]}>
+            <div className={s["title__emblem"]}>
+              <ImageWithFallback
+                src={leagueData.emblem}
+                alt={leagueData.name}
+                width={80}
+                height={80}
+              />
+            </div>
+            <h2 className={s["title__text"]}>
+              {leagueData.name} / {leagueData.area?.name ?? ""}
+            </h2>
           </div>
-          <h2
-            className={s["title__text"]}
-          >{`${leagueData.name} / ${leagueData.area.name}`}</h2>
-        </div>
-        <p
-          className={s["leagueDetails__season"]}
-        >{`シーズン: ${leagueData.currentSeason.startDate} ~ ${leagueData.currentSeason.endDate}`}</p>
-        {leagueData.currentSeason.winner ? (
           <p
             className={s["leagueDetails__season"]}
-          >{`優勝: ${leagueData.currentSeason.winner.name}`}</p>
-        ) : null}
-        <div className={s["tabs"]}>
-          <Button
-            onClick={() => handleTabClick("scores")}
-            className={activeTab === "scores" ? c["active"] : ""}
-          >
-            得点ランキング
-          </Button>
-          <Button
-            onClick={() => handleTabClick("matches")}
-            className={activeTab === "matches" ? c["active"] : ""}
-          >
-            試合結果
-          </Button>
-          <Button
-            onClick={() => handleTabClick("teams")}
-            className={activeTab === "teams" ? c["active"] : ""}
-          >
-            チーム一覧
-          </Button>
-        </div>
+          >{`シーズン: ${leagueData.currentSeason.startDate} ~ ${leagueData.currentSeason.endDate}`}</p>
+          {leagueData.currentSeason.winner ? (
+            <p
+              className={s["leagueDetails__season"]}
+            >{`優勝: ${leagueData.currentSeason.winner.name}`}</p>
+          ) : null}
+          <div className={s["tabs"]}>
+            <Button
+              onClick={() => handleTabClick("scores")}
+              className={activeTab === "scores" ? c["active"] : ""}
+            >
+              得点ランキング
+            </Button>
+            <Button
+              onClick={() => handleTabClick("matches")}
+              className={activeTab === "matches" ? c["active"] : ""}
+            >
+              試合結果
+            </Button>
+            <Button
+              onClick={() => handleTabClick("teams")}
+              className={activeTab === "teams" ? c["active"] : ""}
+            >
+              チーム一覧
+            </Button>
+          </div>
 
-        <div className={s["leagueDetails__content"]}>
-          {activeTab === "scores" ? (
-            <div>
-              <h3>得点ランキング</h3>
-              {scoresDatas.length > 0 ? (
-                <table className={s["scoresTable"]}>
-                  <thead>
-                    <tr>
-                      <th>順位</th>
-                      <th>名前</th>
-                      <th>チーム</th>
-                      <th>ゴール数 (PK数)</th>
-                      <th>アシスト数</th>
-                      <th>試合数</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {scoresDatas.map((scoresData, index) => (
-                      <tr key={scoresData.player.id}>
-                        <td>{index + 1}</td>
-                        <td>
-                          <a
-                            className={s["btn"]}
-                            onClick={() =>
-                              navigatePersons(scoresData.player.id)
-                            }
-                          >
-                            {scoresData.player.name}
-                          </a>
-                        </td>
-                        <td
-                          className={s["btn"]}
-                          onClick={() => navigateTeams(scoresData.team.id)}
-                        >
-                          <ImageWithFallback
-                            src={scoresData.team.crest}
-                            alt={scoresData.team.name}
-                            width={30}
-                            height={30}
-                          />
-                          <p className={s["btn"]}>{scoresData.team.name}</p>
-                        </td>
-                        <td>{`${scoresData.goals} (${
-                          scoresData.penalties ?? 0
-                        })`}</td>
-                        <td>{scoresData.assists ?? 0}</td>
-                        <td>{scoresData.playedMatches}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              ) : (
-                <p className={s["leagueDetails__nodata"]}>NO DATA</p>
-              )}
-            </div>
-          ) : activeTab === "matches" ? (
-            <div>
-              <h3>試合結果</h3>
-              {matchesDatas.length > 0 ? (
-                <>
-                  <div>
-                    <label htmlFor="teamFilter">チームでフィルター</label>
-                    <select
-                      id="teamFilter"
-                      className={c["filter"]}
-                      onChange={handleFilterTeamChange}
-                    >
-                      <option value="">ALL</option>
-                      {teamsData.map((team) => (
-                        <option key={team.id} value={team.id}>
-                          {team.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <table className={c["matches__table"]}>
+          <div className={s["leagueDetails__content"]}>
+            {activeTab === "scores" ? (
+              <div>
+                <h3>得点ランキング</h3>
+                {scoresDatas.length > 0 ? (
+                  <table className={s["scoresTable"]}>
                     <thead>
                       <tr>
-                        <th>日時</th>
-                        <th>ホームチーム</th>
-                        <th>スコア</th>
-                        <th>アウェイチーム</th>
-                        {leagueData.type === "CUP" && (
-                          <>
-                            <th>ステージ</th>
-                            <th>グループ</th>
-                          </>
-                        )}
+                        <th>順位</th>
+                        <th>名前</th>
+                        <th>チーム</th>
+                        <th>ゴール数 (PK数)</th>
+                        <th>アシスト数</th>
+                        <th>試合数</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {currentMatches.map((matchesData) => {
-                        return (
-                          <tr key={matchesData.id}>
-                            <td>{formatDate(matchesData.utcDate)}</td>
-                            <td>
-                              <div
-                                onClick={() =>
-                                  navigateTeams(matchesData.homeTeam.id)
-                                }
-                                className={c["matches__teamOuter"]}
-                              >
-                                <ImageWithFallback
-                                  src={matchesData.homeTeam.crest}
-                                  alt={matchesData.homeTeam.name}
-                                  width={30}
-                                  height={30}
-                                />
-                                <p>{matchesData.homeTeam.name}</p>
-                              </div>
-                            </td>
-                            <td>
-                              {matchesData.score.fullTime.home}
-                              {"-"}
-                              {matchesData.score.fullTime.away}
-                            </td>
-                            <td>
-                              <div
-                                onClick={() =>
-                                  navigateTeams(matchesData.awayTeam.id)
-                                }
-                                className={c["matches__teamOuter"]}
-                              >
-                                <ImageWithFallback
-                                  src={matchesData.awayTeam.crest}
-                                  alt={matchesData.awayTeam.name}
-                                  width={30}
-                                  height={30}
-                                />
-                                <p>{matchesData.awayTeam.name}</p>
-                              </div>
-                            </td>
-                            {leagueData.type === "CUP" && (
-                              <>
-                                <td>{matchesData.stage}</td>
-                                <td>{matchesData.group ?? "-"}</td>
-                              </>
-                            )}
-                          </tr>
-                        );
-                      })}
+                      {scoresDatas.map((scoresData, index) => (
+                        <tr key={scoresData.player.id}>
+                          <td>{index + 1}</td>
+                          <td>
+                            <a
+                              className={s["btn"]}
+                              onClick={() =>
+                                navigatePersons(scoresData.player.id)
+                              }
+                            >
+                              {scoresData.player.name}
+                            </a>
+                          </td>
+                          <td
+                            className={s["btn"]}
+                            onClick={() => navigateTeams(scoresData.team.id)}
+                          >
+                            <ImageWithFallback
+                              src={scoresData.team.crest}
+                              alt={scoresData.team.name}
+                              width={30}
+                              height={30}
+                            />
+                            <p className={s["btn"]}>{scoresData.team.name}</p>
+                          </td>
+                          <td>{`${scoresData.goals} (${
+                            scoresData.penalties ?? 0
+                          })`}</td>
+                          <td>{scoresData.assists ?? 0}</td>
+                          <td>{scoresData.playedMatches}</td>
+                        </tr>
+                      ))}
                     </tbody>
                   </table>
-                  <p
-                    className={c["page__text"]}
-                  >{`${currentPage}/${totalPages}`}</p>
-                  <div className={c["pagination"]}>
-                    <Button
-                      onClick={handleFirstPage}
-                      disabled={currentPage === 1}
-                      className={c["pagination__btn"]}
-                    >
-                      First Page
-                    </Button>
-                    <Button
-                      onClick={handlePreviousPage}
-                      disabled={currentPage === 1}
-                      className={c["pagination__btn"]}
-                    >
-                      Previous
-                    </Button>
-                    <Button
-                      onClick={handleNextPage}
-                      disabled={currentPage >= totalPages}
-                      className={c["pagination__btn"]}
-                    >
-                      Next
-                    </Button>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <p>NO DATA</p>
-                </>
-              )}
-            </div>
-          ) : (
-            <div>
-              <h3>チーム一覧</h3>
-              {teamsData.length > 0 ? (
-                <div className={s["teamsGrid"]}>
-                  {teamsData.map((teamData) => (
-                    <div key={teamData.id} className={s["teamItem"]}>
-                      <a onClick={() => navigateTeams(teamData.id)}>
+                ) : (
+                  <p className={s["leagueDetails__nodata"]}>NO DATA</p>
+                )}
+              </div>
+            ) : activeTab === "matches" ? (
+              <div>
+                <h3>試合結果</h3>
+                {matchesDatas.length > 0 ? (
+                  <>
+                    <div>
+                      <label htmlFor="teamFilter">チームでフィルター</label>
+                      <select
+                        id="teamFilter"
+                        className={c["filter"]}
+                        onChange={handleFilterTeamChange}
+                      >
+                        <option value="">ALL</option>
+                        {teamsData.map((team) => (
+                          <option key={team.id} value={team.id}>
+                            {team.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <table className={c["matches__table"]}>
+                      <thead>
+                        <tr>
+                          <th>日時</th>
+                          <th>ホームチーム</th>
+                          <th>スコア</th>
+                          <th>アウェイチーム</th>
+                          {leagueData.type === "CUP" && (
+                            <>
+                              <th>ステージ</th>
+                              <th>グループ</th>
+                            </>
+                          )}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {currentMatches.map((matchesData) => {
+                          return (
+                            <tr key={matchesData.id}>
+                              <td>{formatDate(matchesData.utcDate)}</td>
+                              <td>
+                                <div
+                                  onClick={() =>
+                                    navigateTeams(matchesData.homeTeam.id)
+                                  }
+                                  className={c["matches__teamOuter"]}
+                                >
+                                  <ImageWithFallback
+                                    src={matchesData.homeTeam.crest}
+                                    alt={matchesData.homeTeam.name}
+                                    width={30}
+                                    height={30}
+                                  />
+                                  <p>{matchesData.homeTeam.name}</p>
+                                </div>
+                              </td>
+                              <td>
+                                {matchesData.score.fullTime.home}
+                                {"-"}
+                                {matchesData.score.fullTime.away}
+                              </td>
+                              <td>
+                                <div
+                                  onClick={() =>
+                                    navigateTeams(matchesData.awayTeam.id)
+                                  }
+                                  className={c["matches__teamOuter"]}
+                                >
+                                  <ImageWithFallback
+                                    src={matchesData.awayTeam.crest}
+                                    alt={matchesData.awayTeam.name}
+                                    width={30}
+                                    height={30}
+                                  />
+                                  <p>{matchesData.awayTeam.name}</p>
+                                </div>
+                              </td>
+                              {leagueData.type === "CUP" && (
+                                <>
+                                  <td>{matchesData.stage}</td>
+                                  <td>{matchesData.group ?? "-"}</td>
+                                </>
+                              )}
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                    <p
+                      className={c["page__text"]}
+                    >{`${currentPage}/${totalPages}`}</p>
+                    <div className={c["pagination"]}>
+                      <Button
+                        onClick={handleFirstPage}
+                        disabled={currentPage === 1}
+                        className={c["pagination__btn"]}
+                      >
+                        First Page
+                      </Button>
+                      <Button
+                        onClick={handlePreviousPage}
+                        disabled={currentPage === 1}
+                        className={c["pagination__btn"]}
+                      >
+                        Previous
+                      </Button>
+                      <Button
+                        onClick={handleNextPage}
+                        disabled={currentPage >= totalPages}
+                        className={c["pagination__btn"]}
+                      >
+                        Next
+                      </Button>
+                    </div>
+                  </>
+                ) : (
+                  <p className={s["leagueDetails__nodata"]}>NO DATA</p>
+                )}
+              </div>
+            ) : (
+              <div>
+                <h3>チーム一覧</h3>
+                {teamsData.length > 0 ? (
+                  <div className={s["teamsGrid"]}>
+                    {teamsData.map((teamData) => (
+                      <a
+                        key={teamData.id}
+                        onClick={() => navigateTeams(teamData.id)}
+                        className={s["teamItem"]}
+                      >
                         <ImageWithFallback
                           src={teamData.crest}
                           alt={teamData.name}
@@ -488,17 +484,19 @@ export default function LeaguePage() {
                         />
                         <p>{teamData.name}</p>
                       </a>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className={c["nodata"]}>NODATA</p>
-              )}
-            </div>
-          )}
-        </div>
-        <ScrollButton onClick={scrollToTop} />
-      </main>
+                    ))}
+                  </div>
+                ) : (
+                  <p className={c["nodata"]}>NODATA</p>
+                )}
+              </div>
+            )}
+          </div>
+        </main>
+      ) : (
+        <p className={c["nodata"]}>NODATA</p>
+      )}
+      <ScrollButton onClick={scrollToTop} />
     </>
   );
 }

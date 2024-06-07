@@ -48,21 +48,3 @@
     cursor: pointer;
   }
 }
-
-.title {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  color: #223a70;
-  font-size: 30px;
-  margin: 0 0 10px 0;
-
-  &__embelm {
-    display: block;
-  }
-
-  &__text {
-    font-size: 30px;
-  }
-}

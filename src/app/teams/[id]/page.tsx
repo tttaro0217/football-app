@@ -3,6 +3,7 @@
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { FaHeart } from "react-icons/fa";
 import ImageWithFallback from "../../../components/ImageWithFallback";
 import s from "./page.module.scss";
 import c from "../../../components/common.module.scss";
@@ -77,8 +78,9 @@ export default function TeamsPage() {
   const [filterCompetitionId, setFilterCompetitionId] = useState<number | null>(
     null
   ); // 大会・リーグのフィルタ用状態を追加
+  const [loadingTeams, setLoadingTeams] = useState(true);
+  const [loadingTeamMatches, setLoadingTeamMatches] = useState(true);
 
-  // const [favorites, setFavorites] = useState<[]>([]);
   const [isReversed, setIsReversed] = useState<boolean>(false);
 
   const itemsPerPage = 10;
@@ -149,6 +151,7 @@ export default function TeamsPage() {
       }
     }
     fetchTeamsData();
+    setLoadingTeams(false);
   }, [id]);
 
   useEffect(() => {
@@ -162,9 +165,11 @@ export default function TeamsPage() {
           } else {
             setTeamsMatchesData([]);
           }
+          setLoadingTeamMatches(false);
         } catch (error) {
           console.error("Error fetching matches data:", error);
           setTeamsMatchesData([]);
+          setLoadingTeamMatches(false);
         }
       }
     }
@@ -273,31 +278,41 @@ export default function TeamsPage() {
   return (
     <>
       <Header></Header>
-      {teamsData && teamsMatchesData.length > 0 ? (
+      {loadingTeams || loadingTeamMatches ? (
+        <p className={`${c["nodata"]} ${c["nodata-center"]}`}>Loading...</p>
+      ) : teamsData && teamsMatchesData.length > 0 ? (
         <>
           <main className={s["teamDetails"]}>
-            <div className={s["title"]}>
-              <div className={s["title__emblem"]}>
-                <ImageWithFallback
-                  src={teamsData.crest}
-                  alt={teamsData.name}
-                  width={50}
-                  height={50}
-                />
+            <div className={c["heading"]}>
+              <div className={c["title"]}>
+                <div className={c["title__emblem"]}>
+                  <ImageWithFallback
+                    src={teamsData.crest}
+                    alt={teamsData.name}
+                    width={50}
+                    height={50}
+                  />
+                </div>
+                <h2 className={c["title__text"]}>{teamsData.name}</h2>
               </div>
-              <h2 className={s["title__text"]}>{teamsData.name}</h2>
+              {/* Favorite button */}
+              <a
+                onClick={() =>
+                  isFavoriteTeam(Number(id))
+                    ? removeFavoriteTeam(Number(id))
+                    : addFavoriteTeam(
+                        Number(id),
+                        teamsData.name,
+                        teamsData.crest
+                      )
+                }
+                className={`${c["favoriteButton"]} ${
+                  isFavoriteTeam(Number(id)) ? c["favorite"] : c["notFavorite"]
+                }`}
+              >
+                <FaHeart />
+              </a>
             </div>
-            {/* Favorite button */}
-            <Button
-              onClick={() =>
-                isFavoriteTeam(Number(id))
-                  ? removeFavoriteTeam(Number(id))
-                  : addFavoriteTeam(Number(id), teamsData.name, teamsData.crest)
-              }
-              className={c["favoriteButton"]}
-            >
-              {isFavoriteTeam(Number(id)) ? "お気に入り解除" : "お気に入り"}
-            </Button>
             <div className={s["tabs"]}>
               <Button
                 onClick={() => handleTabClick("players")}
@@ -562,14 +577,12 @@ export default function TeamsPage() {
               <a>所属リーグ、大会：{teamsData.runningCompetitions}</a>
               <p>{}</p>
             </div> */}
-            <ScrollButton onClick={scrollToTop} />
           </main>
         </>
       ) : (
-        <div className={c["nodata"]}>
-          <p className={c["nodata__text"]}>NODATA</p>
-        </div>
+        <p className={`${c["nodata"]} ${c["nodata-center"]}`}>NO DATA</p>
       )}
+      <ScrollButton onClick={scrollToTop} />
     </>
   );
 }

@@ -1,15 +1,55 @@
 .nodata {
-  font-size: 40px;
-  position: relative;
+  font-size: 20px;
+  font-weight: bold;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-top: 100px;
+}
+
+.nodata-center {
+  line-height: 100vh;
+}
+
+.heading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  margin-bottom: 30px;
+}
+
+.title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  color: #223a70;
+  font-size: 30px;
+
+  &__embelm {
+    display: block;
+  }
 
   &__text {
-    font-size: 40px;
-    padding-top: 70.56px;
+    font-size: 30px;
   }
+}
+
+.favoriteButton {
+  display: flex;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 40px;
+  color: #c6bebe;
+  transition: color 0.3s ease;
+}
+.favoriteButton.favorite {
+  color: #f172a3;
+}
+
+.favoriteButton:focus {
+  outline: none;
 }
 
 .matches {
@@ -35,7 +75,8 @@
   }
 
   &__nodata {
-    font-size: 30px;
+    font-size: 20px;
+    font-weight: bold;
     padding-top: 50px;
   }
 }
@@ -100,8 +141,4 @@
 
 .active {
   background-color: red;
-}
-
-.favoriteButton {
-  margin: 20px auto;
 }

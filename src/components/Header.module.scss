@@ -28,14 +28,33 @@
       }
     }
   }
+}
 
-  &__favorites {
-    color: #fff;
-    font-size: 25px;
+.favorite {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  text-decoration: none;
+
+  &__text {
     text-decoration: none;
+    font-weight: bold;
+    font-size: 25px;
+    color: #f172a3;
+  }
 
-    &:hover {
-      text-decoration: underline;
-    }
+  &:hover .favorite__text {
+    text-decoration: underline;
+  }
+
+  &__button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 30px;
+    color: #f172a3;
+    position: relative;
+    display: inline-block;
+    transition: color 0.3s ease;
   }
 }

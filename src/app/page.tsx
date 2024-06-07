@@ -8,6 +8,7 @@ import s from "./page.module.scss";
 import c from "../components/common.module.scss";
 import { useRouter } from "next/navigation";
 import Header from "../components/Header";
+import ScrollButton from "../components/ScrollButton";
 
 type LeagueData = {
   id: number;
@@ -29,6 +30,9 @@ export default function Page() {
   const navigateToLeague = (code: string) => {
     setLeagueCode(code);
     router.push(`league/${code}`);
+  };
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   useEffect(() => {
@@ -69,7 +73,7 @@ export default function Page() {
         <div>
           <h2 className={s["leagueLists__title"]}>LEAGUE LIST</h2>
           {loadingList && loadingCode ? (
-            <p className={c["nodata"]}>Loading...</p>
+            <p className={`${c["nodata"]}`}>Loading...</p>
           ) : leagueListDatas ? (
             <ul className={s["leagueLists__items"]}>
               {leagueListDatas.map((leagueListData) => (
@@ -100,6 +104,7 @@ export default function Page() {
           )}
         </div>
       </main>
+      <ScrollButton onClick={scrollToTop} />
     </>
   );
 }

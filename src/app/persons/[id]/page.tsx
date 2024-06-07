@@ -2,6 +2,7 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { FaHeart } from "react-icons/fa";
 import s from "./page.module.scss";
 import c from "../../../components/common.module.scss";
 import ImageWithFallback from "../../../components/ImageWithFallback";
@@ -67,11 +68,12 @@ export default function PersonsPage() {
   const [personId, setPersonId] = useState<number | null>(null);
   const [leagueId, setLeagueId] = useState<number | null>(null);
   const [filterLeagueId, setFilterLeagueId] = useState<number | null>(null);
+  const [loadingPersons, setLoadingPersons] = useState(true);
+  const [loadingPersonMatches, setLoadingPersonMatches] = useState(true);
 
   const itemsPerPage = 10;
-  const { id } = useParams(); // useParamsを使ってパスパラメータを取得
+  const { id } = useParams();
 
-  // New state for favorites
   const [favoritePersons, setFavoritePersons] = useState<FavoritePerson[]>(
     () => {
       if (typeof window !== "undefined") {
@@ -81,8 +83,6 @@ export default function PersonsPage() {
       return [];
     }
   );
-
-  console.log(favoritePersons);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -124,9 +124,11 @@ export default function PersonsPage() {
           if (!res.ok) throw new Error("Failed to fetch person data");
           const jsonData = await res.json();
           setPesonsData(jsonData);
+          setLoadingPersons(false);
         } catch (error) {
           console.error("Error fetching person data:", error);
           setPesonsData(null);
+          setLoadingPersons(false);
         }
       }
     }
@@ -141,9 +143,11 @@ export default function PersonsPage() {
           if (!res.ok) throw new Error("Failed to fetch person matches data");
           const jsonData = await res.json();
           setPesonsMatchesData(jsonData.matches);
+          setLoadingPersonMatches(false);
         } catch (error) {
           console.error("Error fetching person matches data:", error);
           setPesonsMatchesData([]);
+          setLoadingPersonMatches(false);
         }
       }
     }
@@ -230,36 +234,43 @@ export default function PersonsPage() {
 
   return (
     <>
-      {pesonsData ? (
+      <Header></Header>
+      {loadingPersons || loadingPersonMatches ? (
+        <p className={`${c["nodata"]} ${c["nodata-center"]}`}>Loading...</p>
+      ) : pesonsData ? (
         <>
-          <Header></Header>
           <main className={s["person"]}>
             <h2 className={s["person__title"]}>選手情報</h2>
-            {/* Favorite button */}
-            <Button
-              onClick={() =>
-                isFavoritePerson(Number(id))
-                  ? removeFavoritePerson(Number(id))
-                  : addFavoritePerson(
-                      Number(id),
-                      pesonsData.name,
-                      pesonsData.currentTeam.crest
-                    )
-              }
-              className={c["favoriteButton"]}
-            >
-              {isFavoritePerson(Number(id)) ? "お気に入り解除" : "お気に入り"}
-            </Button>
-            <div className={s["title"]}>
-              <div className={s["title__emblem"]}>
-                <ImageWithFallback
-                  src={pesonsData.currentTeam.crest}
-                  alt={pesonsData.currentTeam.name}
-                  width={50}
-                  height={50}
-                />
+            <div className={c["heading"]}>
+              <div className={c["title"]}>
+                <div className={c["title__emblem"]}>
+                  <ImageWithFallback
+                    src={pesonsData.currentTeam.crest}
+                    alt={pesonsData.name}
+                    width={50}
+                    height={50}
+                  />
+                </div>
+                <h2 className={c["title__text"]}>{pesonsData.name}</h2>
+                <a
+                  onClick={() =>
+                    isFavoritePerson(Number(id))
+                      ? removeFavoritePerson(Number(id))
+                      : addFavoritePerson(
+                          Number(id),
+                          pesonsData.name,
+                          pesonsData.currentTeam.crest
+                        )
+                  }
+                  className={`${c["favoriteButton"]} ${
+                    isFavoritePerson(Number(id))
+                      ? c["favorite"]
+                      : c["notFavorite"]
+                  }`}
+                >
+                  <FaHeart />
+                </a>
               </div>
-              <h2 className={s["title__text"]}>{pesonsData.name}</h2>
             </div>
             <p className={s["person__position"]}>{pesonsData.position}</p>
             <div className={s["person__team"]}>
@@ -414,10 +425,12 @@ export default function PersonsPage() {
                 <p className={c["matches__nodata"]}>NO DATA</p>
               )}
             </div>
-            <ScrollButton onClick={scrollToTop} />
           </main>
         </>
-      ) : null}
+      ) : (
+        <p className={`${c["nodata"]} ${c["nodata-center"]}`}>NODATA</p>
+      )}
+      <ScrollButton onClick={scrollToTop} />
     </>
   );
 }
