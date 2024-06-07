@@ -24,6 +24,7 @@ type LeagueData = {
     endDate: string;
     winner: {
       name: string;
+      crest: string;
     } | null;
   };
   type: string;
