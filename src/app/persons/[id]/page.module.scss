@@ -1,0 +1,50 @@
+.person {
+  padding: 100px;
+  text-align: center;
+
+  &__team {
+    display: flex;
+    margin-bottom: 30px;
+    justify-content: center;
+    gap: 10px;
+
+    &__currentTeam {
+      display: block;
+      color: #022eb0;
+      cursor: pointer;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    &__nationality {
+      margin: 0;
+    }
+  }
+
+  &__btn {
+    margin: 0 auto 30px;
+  }
+
+  &__outer {
+    display: flex;
+  }
+}
+
+.pagination {
+  display: flex;
+  gap: 10px;
+  width: 320px;
+  margin: 0 auto;
+
+  &__btn {
+    padding: 5px;
+    width: 100px;
+    background-color: #223a70;
+    color: #fff;
+    border-radius: 15px;
+    cursor: pointer;
+  }
+}
