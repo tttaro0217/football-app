@@ -1,0 +1,157 @@
+.nodata {
+  font-size: 20px;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.nodata-center {
+  line-height: 100vh;
+}
+
+.heading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  margin-bottom: 30px;
+}
+
+.title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  color: #223a70;
+  font-size: 30px;
+
+  &__embelm {
+    display: block;
+  }
+
+  &__text {
+    font-size: 30px;
+  }
+}
+
+.favoriteButton {
+  display: flex;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 40px;
+  color: #c6bebe;
+  transition: color 0.3s ease;
+}
+.favoriteButton.favorite {
+  color: #f172a3;
+}
+
+.favoriteButton:focus {
+  outline: none;
+}
+
+.matches {
+  &__versus {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  &__teamOuter,
+  &__competition {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    color: #022eb0;
+    cursor: pointer;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &__nodata {
+    font-size: 20px;
+    font-weight: bold;
+    padding-top: 50px;
+  }
+}
+
+.func {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  gap: 20px;
+  &__filter {
+    &__select {
+      padding: 8px;
+      margin-left: 5px;
+    }
+  }
+
+  &__sortButton {
+    width: 150px;
+  }
+}
+
+.matches__table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  text-align: center;
+}
+
+.matches__table th,
+.matches__table td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: center;
+}
+
+.matches__table th {
+  background-color: #223a70;
+  color: #fff;
+}
+
+.matches__table tr {
+  &:hover {
+    background-color: #ddd;
+  }
+}
+
+.matches__table tr:nth-child(even) {
+  background-color: #f9f9f9;
+
+  &:hover {
+    background-color: #ddd;
+  }
+}
+
+.page__text {
+  margin-bottom: 10px;
+}
+
+.pagination {
+  display: flex;
+  gap: 10px;
+  width: 320px;
+  margin: 0 auto;
+
+  &__btn {
+    padding: 5px;
+    width: 100px;
+    background-color: #223a70;
+    color: #fff;
+    border-radius: 15px;
+    cursor: pointer;
+  }
+}
+
+.active {
+  background-color: red;
+}
