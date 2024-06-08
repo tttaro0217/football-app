@@ -24,14 +24,42 @@
   align-items: center;
   gap: 10px;
   color: #223a70;
-  font-size: 30px;
+  position: relative;
+  margin-bottom: 20px;
 
-  &__embelm {
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 10px;
+  }
+
+  &__emblem {
     display: block;
   }
 
-  &__text {
+  &__text,
+  &__areaName {
     font-size: 30px;
+    margin: 0;
+
+    @media (max-width: 768px) {
+      font-size: 24px;
+    }
+  }
+
+  span {
+    font-size: 30px;
+
+    @media (max-width: 768px) {
+      display: none;
+    }
+  }
+}
+
+.responsive-img {
+  @media (max-width: 768px) {
+    width: 70px;
+    height: 70px;
   }
 }
 
@@ -43,7 +71,16 @@
   font-size: 40px;
   color: #c6bebe;
   transition: color 0.3s ease;
+  position: absolute;
+  right: -100px;
+
+  @media (max-width: 768px) {
+    position: inherit;
+    right: 0;
+    margin-top: 10px;
+  }
 }
+
 .favoriteButton.favorite {
   color: #f172a3;
 }
@@ -62,6 +99,7 @@
   &__teamOuter,
   &__competition {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 5px;
@@ -87,9 +125,15 @@
   justify-content: center;
   margin-bottom: 20px;
   gap: 20px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+
   &__filter {
     &__select {
       padding: 8px;
+      cursor: pointer;
       margin-left: 5px;
     }
   }
@@ -99,8 +143,13 @@
   }
 }
 
+.matches__table-wrapper {
+  overflow-x: auto; /* テーブル全体をスクロール可能にする */
+}
+
 .matches__table {
   width: 100%;
+  min-width: 800px; /* テーブルの最小幅を設定 */
   border-collapse: collapse;
   margin: 20px 0;
   text-align: center;
@@ -109,7 +158,7 @@
 .matches__table th,
 .matches__table td {
   border: 1px solid #ddd;
-  padding: 12px;
+  padding: 12px 5px;
   text-align: center;
 }
 
@@ -129,6 +178,17 @@
 
   &:hover {
     background-color: #ddd;
+  }
+}
+
+@media (max-width: 768px) {
+  .matches__table th,
+  .matches__table td {
+    padding: 8px 5px; /* スマートフォン用にパディングを調整 */
+  }
+
+  .matches__table {
+    font-size: 12px; /* スマートフォン用にフォントサイズを調整 */
   }
 }
 
@@ -152,6 +212,253 @@
   }
 }
 
-.active {
-  background-color: red;
+.tabs {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  gap: 10px;
+}
+
+.tabs button {
+  background-color: #f0f0f0;
+  color: #000;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+  font-weight: bold;
+
+  @media (max-width: 768px) {
+    font-size: 14px;
+    padding: 10px 5px;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 10px;
+  }
+}
+
+.tabs button:hover {
+  background-color: #223a70;
+  color: #fff;
+}
+
+.tabs .active {
+  background-color: #223a70;
+  color: #fff;
+}
+
+.container {
+  padding: 100px 30px;
+  text-align: center;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  @media (max-width: 768px) {
+    padding: 80px 20px;
+  }
+
+  &__title {
+    font-size: 30px;
+    margin-bottom: 40px;
+
+    @media (max-width: 768px) {
+      font-size: 30px;
+      margin-bottom: 30px;
+    }
+  }
+
+  &__team {
+    display: flex;
+    margin-bottom: 30px;
+    justify-content: center;
+    gap: 10px;
+
+    &__currentTeam {
+      display: block;
+      color: #022eb0;
+      cursor: pointer;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    &__nationality {
+      margin: 0;
+    }
+  }
+
+  &__outer {
+    display: flex;
+  }
+
+  &__versus {
+    display: flex;
+    gap: 10px;
+
+    p {
+      margin: 0;
+    }
+  }
+
+  // &__content {
+  //   display: flex;
+  //   justify-content: center;
+  //   gap: 100px;
+
+  //   @media (max-width: 768px) {
+  //     flex-direction: column;
+  //     gap: 20px;
+  //   }
+  // }
+
+  &__season {
+    margin: 0 0 30px;
+  }
+
+  &__winner {
+    margin: 0 0 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+
+    &__icon {
+      font-size: 30px;
+      color: #d0a900;
+    }
+
+    &__team {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    &__text {
+      font-size: 20px;
+
+      @media (max-width: 768px) {
+        font-size: 18px; /* スマートフォン用にフォントサイズを調整 */
+      }
+    }
+  }
+
+  &__list {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    list-style: none;
+
+    p {
+      margin: 0;
+    }
+  }
+
+  &__btn {
+    margin: 0 auto 30px;
+  }
+
+  &__coach {
+    margin-bottom: 20px;
+  }
+}
+
+.scoresTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  text-align: center;
+
+  th,
+  td {
+    border: 1px solid #ddd;
+    padding: 12px;
+  }
+
+  th {
+    background-color: #223a70;
+    color: #fff;
+  }
+
+  tr {
+    &:hover {
+      background-color: #ddd;
+    }
+  }
+
+  tr:nth-child(even) {
+    background-color: #f9f9f9;
+
+    &:hover {
+      background-color: #ddd;
+    }
+  }
+
+  @media (max-width: 768px) {
+    th,
+    td {
+      padding: 8px; /* スマートフォン用にパディングを調整 */
+    }
+  }
+}
+
+.teamsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px; /* スマートフォン用にギャップを調整 */
+  }
+}
+
+.teamItem {
+  list-style: none;
+  text-align: center;
+  background-color: #223a70;
+  padding: 20px 10px;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: 0.2s;
+
+  @media (max-width: 768px) {
+    padding: 20px 5px;
+  }
+
+  &__emblem {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+    width: 90px;
+    height: 90px;
+    margin: 0 auto 10px;
+    border-radius: 10px;
+  }
+
+  &:hover {
+    background-color: #223a70;
+    opacity: 0.8;
+    transition: 0.2s;
+  }
+
+  p {
+    color: #fff;
+    font-size: 18px;
+    font-weight: bold;
+
+    @media (max-width: 768px) {
+      font-size: 16px; /* スマートフォン用にフォントサイズを調整 */
+    }
+  }
+}
+
+.nowrap {
+  white-space: nowrap;
 }

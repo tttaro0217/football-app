@@ -75,7 +75,7 @@ export default function FavoritesPage() {
           <FaHeart className={s["favorite__title__icon"]} />
           <h2 className={s["favorite__title__text"]}>FAVORITE LIST</h2>
         </div>
-        <div>
+        <div className={s["favorite__content-wrapper"]}>
           <div className={s["favorite__content"]}>
             <h3 className={s["favorite__heading"]}>TEAM</h3>
             {loadingTeams ? (

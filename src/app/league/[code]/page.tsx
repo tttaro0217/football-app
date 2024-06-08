@@ -9,7 +9,6 @@ import c from "../../../components/common.module.scss";
 import Header from "../../../components/Header";
 import Button from "../../../components/Button";
 import ScrollButton from "../../../components/ScrollButton";
-import { Duplex } from "stream";
 
 type LeagueData = {
   id: number;
@@ -253,31 +252,32 @@ export default function LeaguePage() {
 
   return (
     <>
-      <Header></Header>
+      <Header />
       {loadingLeague || loadingTeams || loadingScores || loadingMatches ? (
         <p className={c["nodata"]}>Loading...</p>
       ) : leagueData ? (
-        <main className={s["leagueDetails"]}>
-          <div className={s["title"]}>
-            <div className={s["title__emblem"]}>
+        <main className={c["container"]}>
+          <div className={c["title"]}>
+            <div className={c["title__emblem"]}>
               <ImageWithFallback
                 src={leagueData.emblem}
                 alt={leagueData.name}
                 width={80}
                 height={80}
+                className={c["responsive-img"]}
               />
             </div>
-            <h2 className={s["title__text"]}>
-              {leagueData.name} / {leagueData.area?.name ?? ""}
-            </h2>
+            <h2 className={c["title__text"]}>{leagueData.name}</h2>
+            <span>/</span>
+            <h3 className={c["title__areaName"]}>{leagueData.area.name}</h3>
           </div>
-          <p className={s["leagueDetails__season"]}>{`シーズン: ${
+          <p className={c["container__season"]}>{`シーズン: ${
             leagueData.currentSeason?.startDate ?? "N/A"
           } ~ ${leagueData.currentSeason?.endDate ?? "N/A"}`}</p>
           {leagueData.currentSeason?.winner ? (
-            <div className={s["leagueDetails__winner"]}>
-              <GiChampions className={s["leagueDetails__winner__icon"]} />
-              <div className={s["leagueDetails__winner__team"]}>
+            <div className={c["container__winner"]}>
+              <GiChampions className={c["container__winner__icon"]} />
+              <div className={c["container__winner__team"]}>
                 <ImageWithFallback
                   src={leagueData.currentSeason.winner.crest}
                   alt={leagueData.name}
@@ -285,12 +285,12 @@ export default function LeaguePage() {
                   height={30}
                 />
                 <p
-                  className={s["leagueDetails__winner__text"]}
+                  className={c["container__winner__text"]}
                 >{`${leagueData.currentSeason.winner.name}`}</p>
               </div>
             </div>
           ) : null}
-          <div className={s["tabs"]}>
+          <div className={c["tabs"]}>
             <Button
               onClick={() => handleTabClick("scores")}
               className={activeTab === "scores" ? c["active"] : ""}
@@ -311,61 +311,63 @@ export default function LeaguePage() {
             </Button>
           </div>
 
-          <div className={s["leagueDetails__content"]}>
+          <div className={s["container__content"]}>
             {activeTab === "scores" ? (
               <div>
                 <h3>得点ランキング</h3>
                 {scoresDatas.length > 0 ? (
-                  <table className={s["scoresTable"]}>
-                    <thead>
-                      <tr>
-                        <th>順位</th>
-                        <th>名前</th>
-                        <th>チーム</th>
-                        <th>ゴール数 (PK数)</th>
-                        <th>アシスト数</th>
-                        <th>試合数</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {scoresDatas.map((scoresData, index) => (
-                        <tr key={scoresData.player?.id ?? index}>
-                          <td>{index + 1}</td>
-                          <td>
-                            <a
+                  <div className={c["scoresTable-wrapper"]}>
+                    <table className={s["scoresTable"]}>
+                      <thead>
+                        <tr>
+                          <th className={c["nowrap"]}>順位</th>
+                          <th className={c["nowrap"]}>名前</th>
+                          <th className={c["nowrap"]}>チーム</th>
+                          <th className={c["nowrap"]}>G</th>
+                          <th className={c["nowrap"]}>A</th>
+                          <th className={c["nowrap"]}>試合数</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {scoresDatas.map((scoresData, index) => (
+                          <tr key={scoresData.player?.id ?? index}>
+                            <td>{index + 1}</td>
+                            <td>
+                              <a
+                                className={s["btn"]}
+                                onClick={() =>
+                                  navigatePersons(scoresData.player?.id ?? 0)
+                                }
+                              >
+                                {scoresData.player?.name ?? "N/A"}
+                              </a>
+                            </td>
+                            <td
                               className={s["btn"]}
                               onClick={() =>
-                                navigatePersons(scoresData.player?.id ?? 0)
+                                navigateTeams(scoresData.team?.id ?? 0)
                               }
                             >
-                              {scoresData.player?.name ?? "N/A"}
-                            </a>
-                          </td>
-                          <td
-                            className={s["btn"]}
-                            onClick={() =>
-                              navigateTeams(scoresData.team?.id ?? 0)
-                            }
-                          >
-                            <ImageWithFallback
-                              src={scoresData.team?.crest ?? ""}
-                              alt={scoresData.team?.name ?? "N/A"}
-                              width={30}
-                              height={30}
-                            />
-                            <p className={s["btn"]}>
-                              {scoresData.team?.name ?? "N/A"}
-                            </p>
-                          </td>
-                          <td>{`${scoresData.goals} (${
-                            scoresData.penalties ?? 0
-                          })`}</td>
-                          <td>{scoresData.assists ?? 0}</td>
-                          <td>{scoresData.playedMatches}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                              <ImageWithFallback
+                                src={scoresData.team?.crest ?? ""}
+                                alt={scoresData.team?.name ?? "N/A"}
+                                width={30}
+                                height={30}
+                              />
+                              <p className={s["btn"]}>
+                                {scoresData.team?.name ?? "N/A"}
+                              </p>
+                            </td>
+                            <td>{`${scoresData.goals} (${
+                              scoresData.penalties ?? 0
+                            })`}</td>
+                            <td>{scoresData.assists ?? 0}</td>
+                            <td>{scoresData.playedMatches}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 ) : (
                   <p className={c["nodata"]}>NO DATA</p>
                 )}
@@ -398,74 +400,80 @@ export default function LeaguePage() {
                         {isReversed ? "古い順にする" : "最新順にする"}
                       </Button>
                     </div>
-                    <table className={c["matches__table"]}>
-                      <thead>
-                        <tr>
-                          <th>日時</th>
-                          <th>ホームチーム</th>
-                          <th>スコア</th>
-                          <th>アウェイチーム</th>
-                          {leagueData.type === "CUP" && (
-                            <>
-                              <th>ステージ</th>
-                              <th>グループ</th>
-                            </>
-                          )}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {currentMatches.map((matchesData) => {
-                          return (
-                            <tr key={matchesData.id}>
-                              <td>{formatDate(matchesData.utcDate)}</td>
-                              <td>
-                                <div
-                                  onClick={() =>
-                                    navigateTeams(matchesData.homeTeam?.id ?? 0)
-                                  }
-                                  className={c["matches__teamOuter"]}
-                                >
-                                  <ImageWithFallback
-                                    src={matchesData.homeTeam?.crest ?? ""}
-                                    alt={matchesData.homeTeam?.name ?? "N/A"}
-                                    width={30}
-                                    height={30}
-                                  />
-                                  <p>{matchesData.homeTeam?.name ?? "N/A"}</p>
-                                </div>
-                              </td>
-                              <td>
-                                {matchesData.score?.fullTime?.home}
-                                {"-"}
-                                {matchesData.score?.fullTime?.away}
-                              </td>
-                              <td>
-                                <div
-                                  onClick={() =>
-                                    navigateTeams(matchesData.awayTeam?.id ?? 0)
-                                  }
-                                  className={c["matches__teamOuter"]}
-                                >
-                                  <ImageWithFallback
-                                    src={matchesData.awayTeam?.crest ?? ""}
-                                    alt={matchesData.awayTeam?.name ?? "N/A"}
-                                    width={30}
-                                    height={30}
-                                  />
-                                  <p>{matchesData.awayTeam?.name ?? "N/A"}</p>
-                                </div>
-                              </td>
-                              {leagueData.type === "CUP" && (
-                                <>
-                                  <td>{matchesData.stage}</td>
-                                  <td>{matchesData.group ?? "-"}</td>
-                                </>
-                              )}
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
+                    <div className={c["matches__table-wrapper"]}>
+                      <table className={c["matches__table"]}>
+                        <thead>
+                          <tr>
+                            <th className={c["nowrap"]}>日時</th>
+                            <th className={c["nowrap"]}>ホーム</th>
+                            <th className={c["nowrap"]}>スコア</th>
+                            <th className={c["nowrap"]}>アウェイ</th>
+                            {leagueData.type === "CUP" && (
+                              <>
+                                <th className={c["nowrap"]}>ステージ</th>
+                                <th className={c["nowrap"]}>グループ</th>
+                              </>
+                            )}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {currentMatches.map((matchesData) => {
+                            return (
+                              <tr key={matchesData.id}>
+                                <td>{formatDate(matchesData.utcDate)}</td>
+                                <td>
+                                  <div
+                                    onClick={() =>
+                                      navigateTeams(
+                                        matchesData.homeTeam?.id ?? 0
+                                      )
+                                    }
+                                    className={c["matches__teamOuter"]}
+                                  >
+                                    <ImageWithFallback
+                                      src={matchesData.homeTeam?.crest ?? ""}
+                                      alt={matchesData.homeTeam?.name ?? "N/A"}
+                                      width={30}
+                                      height={30}
+                                    />
+                                    <p>{matchesData.homeTeam?.name ?? "N/A"}</p>
+                                  </div>
+                                </td>
+                                <td>
+                                  {matchesData.score?.fullTime?.home}
+                                  {"-"}
+                                  {matchesData.score?.fullTime?.away}
+                                </td>
+                                <td>
+                                  <div
+                                    onClick={() =>
+                                      navigateTeams(
+                                        matchesData.awayTeam?.id ?? 0
+                                      )
+                                    }
+                                    className={c["matches__teamOuter"]}
+                                  >
+                                    <ImageWithFallback
+                                      src={matchesData.awayTeam?.crest ?? ""}
+                                      alt={matchesData.awayTeam?.name ?? "N/A"}
+                                      width={30}
+                                      height={30}
+                                    />
+                                    <p>{matchesData.awayTeam?.name ?? "N/A"}</p>
+                                  </div>
+                                </td>
+                                {leagueData.type === "CUP" && (
+                                  <>
+                                    <td>{matchesData.stage}</td>
+                                    <td>{matchesData.group ?? "-"}</td>
+                                  </>
+                                )}
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
                     <p
                       className={c["page__text"]}
                     >{`${currentPage}/${totalPages}`}</p>
@@ -498,22 +506,24 @@ export default function LeaguePage() {
                 )}
               </div>
             ) : (
-              <div>
+              <>
                 <h3>チーム一覧</h3>
                 {teamsData.length > 0 ? (
-                  <div className={s["teamsGrid"]}>
+                  <div className={c["teamsGrid"]}>
                     {teamsData.map((teamData) => (
                       <a
                         key={teamData.id}
                         onClick={() => navigateTeams(teamData.id)}
-                        className={s["teamItem"]}
+                        className={c["teamItem"]}
                       >
-                        <ImageWithFallback
-                          src={teamData.crest}
-                          alt={teamData.name}
-                          width={50}
-                          height={50}
-                        />
+                        <div className={c["teamItem__emblem"]}>
+                          <ImageWithFallback
+                            src={teamData.crest}
+                            alt={teamData.name}
+                            width={50}
+                            height={50}
+                          />
+                        </div>
                         <p>{teamData.name}</p>
                       </a>
                     ))}
@@ -521,7 +531,7 @@ export default function LeaguePage() {
                 ) : (
                   <p className={c["nodata"]}>NODATA</p>
                 )}
-              </div>
+              </>
             )}
           </div>
         </main>

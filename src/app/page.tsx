@@ -73,41 +73,42 @@ export default function Page() {
   return (
     <>
       <Header />
-      <main className={s["leagueLists"]}>
+      <main className={s["container"]}>
         <div>
-          <div className={s["leagueLists__title"]}>
-            <RiHomeSmileFill className={s["leagueLists__title__icon"]} />
-            <h2 className={s["leagueLists__title__text"]}>LEAGUE LIST</h2>
+          <div className={s["container__title"]}>
+            <RiHomeSmileFill className={s["container__title__icon"]} />
+            <h2 className={s["container__title__text"]}>LEAGUE LIST</h2>
           </div>
           {loadingList ? (
             <p className={`${c["nodata"]}`}>Loading...</p>
           ) : leagueListDatas.length > 0 ? (
-            <ul className={s["leagueLists__items"]}>
+            <ul className={s["container__items"]}>
               {leagueListDatas.map((leagueListData) => (
                 <li
                   onClick={() => navigateToLeague(leagueListData.code)}
                   key={leagueListData.id}
-                  className={s["leagueLists__item"]}
+                  className={s["container__item"]}
                 >
-                  <p className={s["leagueLists__item__name"]}>
+                  <p className={s["container__item__name"]}>
                     {leagueListData.name}
                   </p>
-                  <div className={s["leagueLists__item__emblem"]}>
+                  <div className={s["container__item__emblem"]}>
                     <ImageWithFallback
                       src={leagueListData.emblem}
                       alt={leagueListData.name}
                       width={60}
                       height={60}
+                      className={s["responsive-img"]}
                     />
                   </div>
-                  <p className={s["leagueLists__item__areaName"]}>
+                  <p className={s["container__item__areaName"]}>
                     {leagueListData.area.name}
                   </p>
                 </li>
               ))}
             </ul>
           ) : (
-            <p className={s["nodata"]}>NO DATA</p>
+            <p className={c["nodata"]}>NO DATA</p>
           )}
         </div>
       </main>
