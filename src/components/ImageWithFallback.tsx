@@ -6,6 +6,7 @@ type ImageWithFallbackProps = {
   width: number;
   height: number;
   fallbackSrc?: string;
+  className?: string;
 };
 
 const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
@@ -13,14 +14,27 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
   alt,
   width,
   height,
-  fallbackSrc = "/noimage.png", // デフォルトのフォールバック画像を設定
+  fallbackSrc = "/noimage.png",
+  className,
 }) => {
   return (
     <>
       {src ? (
-        <Image src={src} alt={alt} width={width} height={height} />
+        <Image
+          src={src}
+          alt={alt}
+          width={width}
+          height={height}
+          className={className}
+        />
       ) : (
-        <Image src={fallbackSrc} alt={alt} width={width} height={height} />
+        <Image
+          src={fallbackSrc}
+          alt={alt}
+          width={width}
+          height={height}
+          className={className}
+        />
       )}
     </>
   );
