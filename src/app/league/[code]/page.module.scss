@@ -1,76 +1,3 @@
-.leagueDetails {
-  padding: 100px;
-  text-align: center;
-
-  &__title {
-    text-align: center;
-    color: #223a70;
-    font-size: 30px;
-    margin: 0 0 10px 0;
-  }
-
-  &__emblem {
-    border: 1px solid #ccc;
-    list-style: none;
-    text-align: center;
-    background-color: #223a70;
-    padding: 20px 10px;
-    width: 200px;
-    margin: 0 auto;
-    cursor: pointer;
-    border-radius: 10px;
-    border: 5px solid #223a70;
-    transition: 0.2s;
-  }
-
-  &__outer {
-    display: flex;
-  }
-
-  &__versus {
-    display: flex;
-    gap: 10px;
-
-    p {
-      margin: 0;
-    }
-  }
-
-  &__content {
-    display: flex;
-    justify-content: center;
-    gap: 100px;
-  }
-
-  &__season {
-    margin: 0 0 30px;
-  }
-
-  &__winner {
-    margin: 0 0 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 15px;
-
-    &__icon {
-      font-size: 30px;
-      color: #d0a900;
-    }
-
-    &__team {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-    }
-
-    &__text {
-      font-size: 20px;
-    }
-  }
-}
-
 .page__text {
   margin-bottom: 10px;
 }
@@ -107,13 +34,6 @@
 
 .topNavBtn {
   margin: 0 auto 30px;
-}
-
-.tabs {
-  display: flex;
-  gap: 10px;
-  width: 620px;
-  margin: 0 auto;
 }
 
 .scrollToTopBtn {
@@ -165,8 +85,13 @@
   margin: 10px 0 0;
 }
 
+.scoresTable__table-wrapper {
+  overflow-x: auto; /* テーブル全体をスクロール可能にする */
+}
+
 .scoresTable {
   width: 100%;
+  min-width: 800px; /* テーブルの最小幅を設定 */
   border-collapse: collapse;
   margin: 20px 0;
 }
