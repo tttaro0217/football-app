@@ -10,12 +10,14 @@
   border-radius: 50%;
   width: 50px;
   height: 50px;
-  padding-top: 9px;
   display: flex;
   justify-content: center;
   cursor: pointer;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   &:hover {
     opacity: 0.8;
@@ -24,6 +26,5 @@
   @media (max-width: 768px) {
     width: 40px;
     height: 40px;
-    padding-top: 5px;
   }
 }

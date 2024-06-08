@@ -465,7 +465,14 @@ export default function LeaguePage() {
                                 {leagueData.type === "CUP" && (
                                   <>
                                     <td>{matchesData.stage}</td>
-                                    <td>{matchesData.group ?? "-"}</td>
+                                    <td>
+                                      {matchesData.group
+                                        ? matchesData.group.replace(
+                                            "GROUP_",
+                                            ""
+                                          )
+                                        : "-"}
+                                    </td>
                                   </>
                                 )}
                               </tr>

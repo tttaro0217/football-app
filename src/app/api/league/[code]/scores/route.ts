@@ -9,12 +9,12 @@ export async function GET(
 
   // リクエストがGETメソッドである場合のみ処理を実行
   try {
-    const accessToken = "104b117cf5a24bd29b209edb06877ad8";
-    const leagueUrl = `http://api.football-data.org/v4/competitions/${code}/scorers`; // APIのエンドポイントURL
-    const headers = {
+    const accessToken = process.env.FOOTBALL_DATA_API_ACCESS_TOKEN;
+    const leagueUrl = `${process.env.FOOTBALL_DATA_API_BASE_URL}/competitions/${code}/scorers`; // APIのエンドポイントURL
+    const headers: HeadersInit = {
       // リクエストヘッダー
       "Content-Type": "application/json",
-      "X-Auth-Token": accessToken,
+      "X-Auth-Token": accessToken || "",
     };
     const res = await fetch(leagueUrl, { headers }); // APIエンドポイントにGETリクエストを送信してデータを取得
     if (!res.ok) {
