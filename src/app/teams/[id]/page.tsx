@@ -276,15 +276,18 @@ export default function TeamsPage() {
             <h2 className={c["container__title"]}>TEAM</h2>
             <div className={c["heading"]}>
               <div className={c["title"]}>
-                <div className={c["title__emblem"]}>
-                  <ImageWithFallback
-                    src={teamsData.crest}
-                    alt={teamsData.name}
-                    width={50}
-                    height={50}
-                  />
+                <div className={c["title__top"]}>
+                  <div className={c["title__emblem"]}>
+                    <ImageWithFallback
+                      src={teamsData.crest}
+                      alt={teamsData.name}
+                      width={50}
+                      height={50}
+                      className={c["title__emblem__icon"]}
+                    />
+                  </div>
+                  <h2 className={c["title__text"]}>{teamsData.name}</h2>
                 </div>
-                <h2 className={c["title__text"]}>{teamsData.name}</h2>
                 {teamsData.name && teamsData.crest && (
                   <a
                     onClick={() =>
@@ -482,17 +485,21 @@ export default function TeamsPage() {
                                   >
                                     <ImageWithFallback
                                       src={matchesData.homeTeam?.crest ?? ""}
-                                      alt={matchesData.homeTeam?.name ?? "N/A"}
+                                      alt={
+                                        matchesData.homeTeam?.name ?? "NO DATA"
+                                      }
                                       width={30}
                                       height={30}
                                     />
-                                    <p>{matchesData.homeTeam?.name ?? "N/A"}</p>
+                                    <p>
+                                      {matchesData.homeTeam?.name ?? "NO DATA"}
+                                    </p>
                                   </a>
                                 </td>
                                 <td>
-                                  {matchesData.score?.fullTime?.home}
+                                  {matchesData.score?.fullTime?.home ?? "-"}
                                   {"-"}
-                                  {matchesData.score?.fullTime?.away}
+                                  {matchesData.score?.fullTime?.away ?? "-"}
                                 </td>
                                 <td>
                                   <a
@@ -505,11 +512,15 @@ export default function TeamsPage() {
                                   >
                                     <ImageWithFallback
                                       src={matchesData.awayTeam?.crest ?? ""}
-                                      alt={matchesData.awayTeam?.name ?? "N/A"}
+                                      alt={
+                                        matchesData.awayTeam?.name ?? "NO DATA"
+                                      }
                                       width={30}
                                       height={30}
                                     />
-                                    <p>{matchesData.awayTeam?.name ?? "N/A"}</p>
+                                    <p>
+                                      {matchesData.awayTeam?.name ?? "NO DATA"}
+                                    </p>
                                   </a>
                                 </td>
                                 <td>
@@ -526,13 +537,15 @@ export default function TeamsPage() {
                                         matchesData.competition?.emblem ?? ""
                                       }
                                       alt={
-                                        matchesData.competition?.name ?? "N/A"
+                                        matchesData.competition?.name ??
+                                        "NO DATA"
                                       }
                                       width={30}
                                       height={30}
                                     />
                                     <p>
-                                      {matchesData.competition?.name ?? "N/A"}
+                                      {matchesData.competition?.name ??
+                                        "NO DATA"}
                                     </p>
                                     <p className={c["matches__seazon"]}>
                                       {formatSeason(
@@ -570,14 +583,18 @@ export default function TeamsPage() {
                                 >
                                   <ImageWithFallback
                                     src={matchesData.homeTeam?.crest ?? ""}
-                                    alt={matchesData.homeTeam?.name ?? "N/A"}
+                                    alt={
+                                      matchesData.homeTeam?.name ?? "NO DATA"
+                                    }
                                     width={30}
                                     height={30}
                                   />
-                                  <p>{matchesData.homeTeam?.name ?? "N/A"}</p>
+                                  <p>
+                                    {matchesData.homeTeam?.name ?? "NO DATA"}
+                                  </p>
                                 </div>
                                 <span className={c["matches__score"]}>
-                                  {matchesData.score?.fullTime?.home}
+                                  {matchesData.score?.fullTime?.home ?? "-"}
                                 </span>
                               </div>
                             </div>
@@ -591,14 +608,18 @@ export default function TeamsPage() {
                                 >
                                   <ImageWithFallback
                                     src={matchesData.awayTeam?.crest ?? ""}
-                                    alt={matchesData.awayTeam?.name ?? "N/A"}
+                                    alt={
+                                      matchesData.awayTeam?.name ?? "NO DATA"
+                                    }
                                     width={30}
                                     height={30}
                                   />
-                                  <p>{matchesData.awayTeam?.name ?? "N/A"}</p>
+                                  <p>
+                                    {matchesData.awayTeam?.name ?? "NO DATA"}
+                                  </p>
                                 </div>
                                 <span className={c["matches__score"]}>
-                                  {matchesData.score?.fullTime?.away}
+                                  {matchesData.score?.fullTime?.away ?? "-"}
                                 </span>
                               </div>
                             </div>
@@ -613,11 +634,15 @@ export default function TeamsPage() {
                               >
                                 <ImageWithFallback
                                   src={matchesData.competition?.emblem ?? ""}
-                                  alt={matchesData.competition?.name ?? "N/A"}
+                                  alt={
+                                    matchesData.competition?.name ?? "NO DATA"
+                                  }
                                   width={30}
                                   height={30}
                                 />
-                                <p>{matchesData.competition?.name ?? "N/A"}</p>
+                                <p>
+                                  {matchesData.competition?.name ?? "NO DATA"}
+                                </p>
                                 <p className={c["matches__seazon"]}>
                                   {formatSeason(
                                     matchesData.season?.startDate ?? "",
