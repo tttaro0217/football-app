@@ -1,7 +1,6 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { FaHeart } from "react-icons/fa";
 import ImageWithFallback from "../../../components/ImageWithFallback";
@@ -75,7 +74,7 @@ export default function TeamsPage() {
   const [teamId, setTeamId] = useState<number | null>(null);
   const [personId, setPersonId] = useState<number | null>(null);
   const [leagueId, setLeagueId] = useState<number | null>(null);
-  const [filterPosition, setFilterPosition] = useState<string>(""); // 空文字列を初期値に設定
+  const [filterPosition, setFilterPosition] = useState<string>("");
   const [filterCompetitionId, setFilterCompetitionId] = useState<number | null>(
     null
   ); // 大会・リーグのフィルタ用状態を追加
@@ -234,7 +233,7 @@ export default function TeamsPage() {
   ) => {
     const value = e.target.value;
     setFilterCompetitionId(value === "" ? null : parseInt(value));
-    setCurrentPage(1); // Reset to the first page when filter changes
+    setCurrentPage(1);
   };
 
   const scrollToTop = () => {
@@ -244,10 +243,10 @@ export default function TeamsPage() {
   const formatDate = (isoDateString: string) => {
     const date = new Date(isoDateString);
     const year = date.getFullYear();
-    const month = date.getMonth() + 1; // 月は0から始まるため+1します
+    const month = date.getMonth() + 1; // 月は0から始まるため+1
     const day = date.getDate();
     const hours = date.getHours();
-    const minutes = String(date.getMinutes()).padStart(2, "0"); // 分を2桁にフォーマットします
+    const minutes = String(date.getMinutes()).padStart(2, "0"); // 分を2桁にフォーマット
 
     return `${year}/${month}/${day} ${hours}:${minutes}`;
   };
@@ -260,10 +259,6 @@ export default function TeamsPage() {
     const endYear = new Date(endDateString).getFullYear().toString().slice(-2);
     return `${startYear}/${endYear}`;
   };
-
-  console.log(teamsData);
-  console.log(teamsMatchesData);
-  console.log(loadingTeams, loadingTeamMatches);
 
   return (
     <>

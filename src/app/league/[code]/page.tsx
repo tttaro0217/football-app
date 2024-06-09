@@ -95,7 +95,7 @@ export default function LeaguePage() {
     "scores"
   );
   const [teamId, setTeamId] = useState<number | null>(null);
-  const [personrId, setPersonId] = useState<number | null>(null);
+  const [personId, setPersonId] = useState<number | null>(null);
   const [filterMatchId, setFilterMatchId] = useState<number | null>(null);
   const [loadingLeague, setLoadingLeague] = useState(true);
   const [loadingTeams, setLoadingTeams] = useState(true);
@@ -255,7 +255,7 @@ export default function LeaguePage() {
     <>
       <Header />
       {loadingLeague || loadingTeams || loadingScores || loadingMatches ? (
-        <p className={c["nodata"]}>Loading...</p>
+        <p className={`${c["nodata"]} ${c["nodata-center"]}`}>Loading...</p>
       ) : leagueData ? (
         <main className={c["container"]}>
           <div className={c["title"]}>
@@ -488,11 +488,15 @@ export default function LeaguePage() {
                                   >
                                     <ImageWithFallback
                                       src={matchesData.homeTeam?.crest ?? ""}
-                                      alt={matchesData.homeTeam?.name ?? "NO DATA"}
+                                      alt={
+                                        matchesData.homeTeam?.name ?? "NO DATA"
+                                      }
                                       width={30}
                                       height={30}
                                     />
-                                    <p>{matchesData.homeTeam?.name ?? "NO DATA"}</p>
+                                    <p>
+                                      {matchesData.homeTeam?.name ?? "NO DATA"}
+                                    </p>
                                   </div>
                                 </td>
                                 <td>
@@ -511,11 +515,15 @@ export default function LeaguePage() {
                                   >
                                     <ImageWithFallback
                                       src={matchesData.awayTeam?.crest ?? ""}
-                                      alt={matchesData.awayTeam?.name ?? "NO DATA"}
+                                      alt={
+                                        matchesData.awayTeam?.name ?? "NO DATA"
+                                      }
                                       width={30}
                                       height={30}
                                     />
-                                    <p>{matchesData.awayTeam?.name ?? "NO DATA"}</p>
+                                    <p>
+                                      {matchesData.awayTeam?.name ?? "NO DATA"}
+                                    </p>
                                   </div>
                                 </td>
                                 {leagueData.type === "CUP" && (
