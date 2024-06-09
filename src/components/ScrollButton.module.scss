@@ -2,10 +2,8 @@
   position: fixed;
   bottom: 20px;
   right: 20px;
-  z-index: 1000;
+  z-index: 100;
   background-color: #f172a3;
-  color: white;
-  font-size: 24px;
   border: none;
   border-radius: 50%;
   width: 50px;
@@ -18,6 +16,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 0;
+  margin: 0;
+
+  &__icon {
+    color: white;
+    font-size: 24px;
+    position: absolute;
+    top: 50%;
+    transform: translate(0, -50%);
+  }
 
   &:hover {
     opacity: 0.8;
@@ -26,5 +34,9 @@
   @media (max-width: 768px) {
     width: 40px;
     height: 40px;
+
+    &__icon {
+      font-size: 20px;
+    }
   }
 }
