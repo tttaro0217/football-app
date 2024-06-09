@@ -46,6 +46,7 @@ type MatchData = {
     emblem: string;
     name: string;
     id: number;
+    type: string;
   };
   season: {
     startDate: string;
@@ -291,7 +292,7 @@ export default function PersonsPage() {
                   <div className={c["func"]}>
                     <div className={c["func__filter"]}>
                       <label htmlFor="leagueFilter">
-                        大会・リーグでフィルター：
+                        大会・リーグでフィルター
                       </label>
                       <select
                         id="leagueFilter"
@@ -359,9 +360,9 @@ export default function PersonsPage() {
                                 </div>
                               </td>
                               <td>
-                                {matchesData.score?.fullTime?.home}
+                                {matchesData.score?.fullTime?.home ?? "N/A"}
                                 {"-"}
-                                {matchesData.score?.fullTime?.away}
+                                {matchesData.score?.fullTime?.away ?? "N/A"}
                               </td>
                               <td>
                                 <div
@@ -406,13 +407,108 @@ export default function PersonsPage() {
                                 </a>
                               </td>
                               <td>{matchesData.stage}</td>
-                              <td>{matchesData.group ?? "-"}</td>
+                              <td>
+                                {matchesData.group ? matchesData.group : "-"}
+                              </td>
                             </tr>
                           );
                         })}
                       </tbody>
                     </table>
                   </div>
+                  {/* スマホ用のカードレイアウト */}
+                  <div className={c["matches__cards"]}>
+                    {currentMatches.map((matchesData) => (
+                      <div key={matchesData.id} className={c["matches__card"]}>
+                        <div className={c["matches__card__row"]}>
+                          <span className={c["matches__card__value"]}>
+                            {formatDate(matchesData.utcDate)}
+                          </span>
+                        </div>
+                        <div className={c["matches__card__row"]}>
+                          <div className={c["matches__teamScore"]}>
+                            <div
+                              onClick={() =>
+                                navigateTeams(matchesData.homeTeam?.id ?? 0)
+                              }
+                              className={c["matches__teamOuter"]}
+                            >
+                              <ImageWithFallback
+                                src={matchesData.homeTeam?.crest ?? ""}
+                                alt={matchesData.homeTeam?.name ?? "N/A"}
+                                width={30}
+                                height={30}
+                              />
+                              <p>{matchesData.homeTeam?.name ?? "N/A"}</p>
+                            </div>
+                            <span className={c["matches__score"]}>
+                              {matchesData.score?.fullTime?.home ?? "N/A"}
+                            </span>
+                          </div>
+                        </div>
+                        <div className={c["matches__card__row"]}>
+                          <div className={c["matches__teamScore"]}>
+                            <div
+                              onClick={() =>
+                                navigateTeams(matchesData.awayTeam?.id ?? 0)
+                              }
+                              className={c["matches__teamOuter"]}
+                            >
+                              <ImageWithFallback
+                                src={matchesData.awayTeam?.crest ?? ""}
+                                alt={matchesData.awayTeam?.name ?? "N/A"}
+                                width={30}
+                                height={30}
+                              />
+                              <p>{matchesData.awayTeam?.name ?? "N/A"}</p>
+                            </div>
+                            <span className={c["matches__score"]}>
+                              {matchesData.score?.fullTime?.away ?? "N/A"}
+                            </span>
+                          </div>
+                        </div>
+                        <div className={c["matches__card__row"]}>
+                          <a
+                            onClick={() =>
+                              navigateLeague(matchesData.competition?.id ?? 0)
+                            }
+                            className={c["matches__competition"]}
+                          >
+                            <ImageWithFallback
+                              src={matchesData.competition?.emblem ?? ""}
+                              alt={matchesData.competition?.name ?? "N/A"}
+                              width={30}
+                              height={30}
+                            />
+                            <p>{matchesData.competition?.name ?? "N/A"}</p>
+                            <p className={c["matches__seazon"]}>
+                              {formatSeason(
+                                matchesData.season?.startDate ?? "",
+                                matchesData.season?.endDate ?? ""
+                              )}
+                            </p>
+                          </a>
+                        </div>
+                        {matchesData.competition.type === "CUP" && (
+                          <>
+                            <div className={c["matches__card__row"]}>
+                              <span className={c["matches__card__value"]}>
+                                {matchesData.stage}
+                              </span>
+                            </div>
+                            <div className={c["matches__card__row"]}>
+                              <span className={c["matches__card__value"]}>
+                                {matchesData.group
+                                  ? matchesData.group.replace("GROUP_", "")
+                                  : "-"}
+                              </span>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
                   <p
                     className={c["page__text"]}
                   >{`${currentPage}/${totalPages}`}</p>

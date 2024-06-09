@@ -61,7 +61,7 @@
 
 .teamsGrid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr); /* 横に3つ並べる */
+  grid-template-columns: repeat(5, 1fr);
   gap: 16px;
   padding: 20px;
 }
@@ -85,43 +85,120 @@
   margin: 10px 0 0;
 }
 
-.scoresTable__table-wrapper {
-  overflow-x: auto; /* テーブル全体をスクロール可能にする */
+.scoresTable-wrapper {
+  overflow-x: auto;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
 }
 
 .scoresTable {
   width: 100%;
-  min-width: 800px; /* テーブルの最小幅を設定 */
   border-collapse: collapse;
   margin: 20px 0;
-}
-
-.scoresTable th,
-.scoresTable td {
-  border: 1px solid #ddd;
-  padding: 12px;
-}
-
-.scoresTable th {
-  background-color: #f2f2f2;
   text-align: center;
+
+  th,
+  td {
+    border: 1px solid #ddd;
+    padding: 12px;
+  }
+
+  th {
+    background-color: #223a70;
+    color: #fff;
+  }
+
+  tr {
+    &:hover {
+      background-color: #ddd;
+    }
+  }
+
+  tr:nth-child(even) {
+    background-color: #f9f9f9;
+
+    &:hover {
+      background-color: #ddd;
+    }
+  }
+
+  @media (max-width: 768px) {
+    th,
+    td {
+      padding: 8px;
+    }
+  }
 }
 
-.scoresTable td {
-  text-align: center;
-}
+.scores {
+  &__cards {
+    display: none;
+  }
 
-.scoresTable tr:nth-child(even) {
-  background-color: #f9f9f9;
-}
+  @media (max-width: 768px) {
+    &__cards {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 10px;
+      background-color: #f9f9f9;
+    }
 
-.scoresTable tr:hover {
-  background-color: #ddd;
-}
+    &__card {
+      display: flex;
+      flex-direction: column;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background-color: #fff;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 
-.scoresTable th {
-  background-color: #223a70;
-  color: white;
+      &__row {
+        padding: 15px 0;
+        border-bottom: 1px solid #ddd;
+
+        &:last-child {
+          border-bottom: none;
+        }
+      }
+
+      .scores__teamOuter {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        font-size: 16px;
+
+        &:first-child {
+          margin-bottom: 10px;
+        }
+
+        img {
+          width: 20px;
+          height: 20px;
+        }
+
+        p {
+          margin: 0;
+        }
+      }
+
+      .scores__rank {
+        text-align: center;
+        font-size: 16px;
+      }
+
+      .scores__stats {
+        font-size: 16px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 5%;
+      }
+    }
+  }
 }
 
 .title {
