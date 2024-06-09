@@ -85,43 +85,185 @@
   margin: 10px 0 0;
 }
 
-.scoresTable__table-wrapper {
-  overflow-x: auto; /* テーブル全体をスクロール可能にする */
+@media (max-width: 768px) {
+  .scoresTable-wrapper {
+    display: none;
+  }
 }
 
-.scoresTable {
-  width: 100%;
-  min-width: 800px; /* テーブルの最小幅を設定 */
-  border-collapse: collapse;
-  margin: 20px 0;
-}
+.scores {
+  &__cards {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+    background-color: #f9f9f9;
+  }
 
-.scoresTable th,
-.scoresTable td {
-  border: 1px solid #ddd;
-  padding: 12px;
-}
+  &__card {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    background-color: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 
-.scoresTable th {
-  background-color: #f2f2f2;
-  text-align: center;
-}
+    &__row {
+      padding: 10px 0;
+      border-bottom: 1px solid #ddd;
 
-.scoresTable td {
-  text-align: center;
-}
+      &:last-child {
+        border-bottom: none;
+      }
+    }
 
-.scoresTable tr:nth-child(even) {
-  background-color: #f9f9f9;
-}
+    &__rank {
+      font-size: 20px;
+      font-weight: bold;
+      text-align: center;
+    }
 
-.scoresTable tr:hover {
-  background-color: #ddd;
-}
+    &__team {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: center;
+      justify-content: center;
+    }
 
-.scoresTable th {
-  background-color: #223a70;
-  color: white;
+    &__teamOuter {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      font-size: 14px;
+
+      img {
+        width: 20px;
+        height: 20px;
+      }
+
+      p {
+        margin: 0;
+      }
+    }
+
+    &__stats {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      text-align: center;
+      font-size: 14px;
+
+      span {
+        display: block;
+      }
+    }
+  }
+
+  &__table-wrapper {
+    overflow-x: auto;
+  }
+
+  &__table {
+    width: 100%;
+    min-width: 800px;
+    border-collapse: collapse;
+    margin: 20px 0;
+  }
+
+  &__table th,
+  &__table td {
+    border: 1px solid #ddd;
+    padding: 12px;
+  }
+
+  &__table th {
+    background-color: #f2f2f2;
+    text-align: center;
+  }
+
+  &__table td {
+    text-align: center;
+  }
+
+  &__table tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+
+  &__table tr:hover {
+    background-color: #ddd;
+  }
+
+  &__table th {
+    background-color: #223a70;
+    color: white;
+  }
+
+  @media (max-width: 768px) {
+    &__cards {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 10px;
+      background-color: #f9f9f9;
+    }
+
+    &__card {
+      display: flex;
+      flex-direction: column;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 15px;
+      background-color: #fff;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+      &__row {
+        padding: 10px 0;
+        border-bottom: 1px solid #ddd;
+
+        &:last-child {
+          border-bottom: none;
+        }
+      }
+
+      .scores__teamOuter {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        font-size: 16px;
+
+        &:first-child {
+          margin-bottom: 10px;
+        }
+
+        img {
+          width: 20px;
+          height: 20px;
+        }
+
+        p {
+          margin: 0;
+        }
+      }
+
+      .scores__rank {
+        text-align: center;
+        font-size: 16px;
+      }
+
+      .scores__stats {
+        font-size: 16px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 5%;
+      }
+    }
+  }
 }
 
 .title {

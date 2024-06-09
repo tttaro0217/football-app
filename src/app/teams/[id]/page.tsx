@@ -43,6 +43,7 @@ type MatchData = {
     emblem: string;
     name: string;
     id: number;
+    type: string;
   };
   score: {
     winner: string;
@@ -260,15 +261,6 @@ export default function TeamsPage() {
     return `${startYear}/${endYear}`;
   };
 
-  const getYouTubeLink = (match: MatchData) => {
-    const searchQuery = `${match.homeTeam.name} vs ${match.awayTeam.name} ${
-      formatDate(match.utcDate).split(" ")[0]
-    }`;
-    return `https://www.youtube.com/results?search_query=${encodeURIComponent(
-      searchQuery
-    )}`;
-  };
-
   console.log(teamsData);
   console.log(teamsMatchesData);
   console.log(loadingTeams, loadingTeamMatches);
@@ -473,7 +465,6 @@ export default function TeamsPage() {
                               <th className={c["nowrap"]}>アウェイ</th>
                               <th className={c["nowrap"]}>大会・リーグ</th>
                               <th className={c["nowrap"]}>ステージ</th>
-                              <th className={c["nowrap"]}>Youtube</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -552,24 +543,107 @@ export default function TeamsPage() {
                                   </a>
                                 </td>
                                 <td>{matchesData.stage}</td>
-                                <td>
-                                  <Link
-                                    href={getYouTubeLink(matchesData)}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                  >
-                                    <ImageWithFallback
-                                      src={"/yt_logo_rgb_light.png"}
-                                      alt={"youtube logo"}
-                                      width={64}
-                                      height={14}
-                                    />
-                                  </Link>
-                                </td>
                               </tr>
                             ))}
                           </tbody>
                         </table>
+                      </div>
+                      {/* スマホ用のカードレイアウト */}
+                      <div className={c["matches__cards"]}>
+                        {currentMatches.map((matchesData) => (
+                          <div
+                            key={matchesData.id}
+                            className={c["matches__card"]}
+                          >
+                            <div className={c["matches__card__row"]}>
+                              <span className={c["matches__card__value"]}>
+                                {formatDate(matchesData.utcDate)}
+                              </span>
+                            </div>
+                            <div className={c["matches__card__row"]}>
+                              <div className={c["matches__teamScore"]}>
+                                <div
+                                  onClick={() =>
+                                    navigateTeam(matchesData.homeTeam?.id ?? 0)
+                                  }
+                                  className={c["matches__teamOuter"]}
+                                >
+                                  <ImageWithFallback
+                                    src={matchesData.homeTeam?.crest ?? ""}
+                                    alt={matchesData.homeTeam?.name ?? "N/A"}
+                                    width={30}
+                                    height={30}
+                                  />
+                                  <p>{matchesData.homeTeam?.name ?? "N/A"}</p>
+                                </div>
+                                <span className={c["matches__score"]}>
+                                  {matchesData.score?.fullTime?.home}
+                                </span>
+                              </div>
+                            </div>
+                            <div className={c["matches__card__row"]}>
+                              <div className={c["matches__teamScore"]}>
+                                <div
+                                  onClick={() =>
+                                    navigateTeam(matchesData.awayTeam?.id ?? 0)
+                                  }
+                                  className={c["matches__teamOuter"]}
+                                >
+                                  <ImageWithFallback
+                                    src={matchesData.awayTeam?.crest ?? ""}
+                                    alt={matchesData.awayTeam?.name ?? "N/A"}
+                                    width={30}
+                                    height={30}
+                                  />
+                                  <p>{matchesData.awayTeam?.name ?? "N/A"}</p>
+                                </div>
+                                <span className={c["matches__score"]}>
+                                  {matchesData.score?.fullTime?.away}
+                                </span>
+                              </div>
+                            </div>
+                            <div className={c["matches__card__row"]}>
+                              <a
+                                onClick={() =>
+                                  navigateLeague(
+                                    matchesData.competition?.id ?? 0
+                                  )
+                                }
+                                className={c["matches__competition"]}
+                              >
+                                <ImageWithFallback
+                                  src={matchesData.competition?.emblem ?? ""}
+                                  alt={matchesData.competition?.name ?? "N/A"}
+                                  width={30}
+                                  height={30}
+                                />
+                                <p>{matchesData.competition?.name ?? "N/A"}</p>
+                                <p className={c["matches__seazon"]}>
+                                  {formatSeason(
+                                    matchesData.season?.startDate ?? "",
+                                    matchesData.season?.endDate ?? ""
+                                  )}
+                                </p>
+                              </a>
+                            </div>
+                            {matchesData.competition.type === "CUP" && (
+                              <>
+                                <div className={c["matches__card__row"]}>
+                                  <span className={c["matches__card__value"]}>
+                                    {matchesData.stage}
+                                  </span>
+                                </div>
+                                <div className={c["matches__card__row"]}>
+                                  <span className={c["matches__card__value"]}>
+                                    {matchesData.group
+                                      ? matchesData.group
+                                      : "-"}
+                                  </span>
+                                </div>
+                              </>
+                            )}
+                          </div>
+                        ))}
                       </div>
                       <p
                         className={c["page__text"]}
