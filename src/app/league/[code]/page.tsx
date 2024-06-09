@@ -382,15 +382,17 @@ export default function LeaguePage() {
                           </div>
                           <div className={s["scores__card__row"]}>
                             <div className={s["scores__team"]}>
-                              <div
+                              <a
                                 onClick={() =>
                                   navigatePersons(scoresData.player?.id ?? 0)
                                 }
                                 className={s["scores__teamOuter"]}
                               >
-                                <p>{scoresData.player?.name ?? "N/A"}</p>
-                              </div>
-                              <div
+                                <p className={s["btn"]}>
+                                  {scoresData.player?.name ?? "N/A"}
+                                </p>
+                              </a>
+                              <a
                                 onClick={() =>
                                   navigateTeams(scoresData.team?.id ?? 0)
                                 }
@@ -402,8 +404,10 @@ export default function LeaguePage() {
                                   width={20}
                                   height={20}
                                 />
-                                <p>{scoresData.team?.name ?? "N/A"}</p>
-                              </div>
+                                <p className={s["btn"]}>
+                                  {scoresData.team?.name ?? "N/A"}
+                                </p>
+                              </a>
                             </div>
                           </div>
                           <div className={s["scores__card__row"]}>
