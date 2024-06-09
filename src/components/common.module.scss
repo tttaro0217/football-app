@@ -124,13 +124,13 @@
 
   &__table-wrapper {
     overflow-x: auto;
+    margin: 20px 0;
   }
 
   &__table {
     width: 100%;
     min-width: 800px;
     border-collapse: collapse;
-    margin: 20px 0;
     text-align: center;
   }
 
@@ -160,6 +160,10 @@
     }
   }
 
+  &__cards {
+    display: none;
+  }
+
   @media (max-width: 768px) {
     &__table-wrapper {
       display: none;
@@ -171,6 +175,7 @@
       gap: 10px;
       padding: 10px;
       background-color: #f9f9f9;
+      margin: 20px 0;
     }
 
     &__card {
