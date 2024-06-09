@@ -3,7 +3,6 @@
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FaHeart } from "react-icons/fa";
-import s from "./page.module.scss";
 import c from "../../../components/common.module.scss";
 import ImageWithFallback from "../../../components/ImageWithFallback";
 import Header from "../../../components/Header";
@@ -157,9 +156,6 @@ export default function PersonsPage() {
     fetchPersonsMatchesData();
   }, [id]);
 
-  console.log("personsData", personsData);
-  console.log("personsMatchesData", personsMatchesData);
-
   const router = useRouter();
   const navigateTeams = (id: number) => {
     setTeamId(id);
@@ -213,10 +209,10 @@ export default function PersonsPage() {
   const formatDate = (isoDateString: string) => {
     const date = new Date(isoDateString);
     const year = date.getFullYear();
-    const month = date.getMonth() + 1; // 月は0から始まるため+1します
+    const month = date.getMonth() + 1; // 月は0から始まるため+1
     const day = date.getDate();
     const hours = date.getHours();
-    const minutes = String(date.getMinutes()).padStart(2, "0"); // 分を2桁にフォーマットします
+    const minutes = String(date.getMinutes()).padStart(2, "0"); // 分を2桁化
 
     return `${year}/${month}/${day} ${hours}:${minutes}`;
   };
@@ -229,6 +225,18 @@ export default function PersonsPage() {
     const endYear = new Date(endDateString).getFullYear().toString().slice(-2);
     return `${startYear}/${endYear}`;
   };
+
+  const leagueOptions = Array.from(
+    new Set(personsMatchesData.map((match) => match.competition.id))
+  ).map((id) => {
+    const league = personsMatchesData.find(
+      (match) => match.competition.id === id
+    )?.competition;
+    return {
+      id: league?.id,
+      name: league?.name ?? "NO DATA",
+    };
+  });
 
   return (
     <>
@@ -302,23 +310,14 @@ export default function PersonsPage() {
                         onChange={handleFilterLeagueChange}
                         className={c["func__filter__select"]}
                       >
-                        <option value="">全ての大会・リーグ</option>
-                        {Array.from(
-                          new Set(
-                            personsMatchesData.map(
-                              (match) => match.competition.id
-                            )
-                          )
-                        ).map((id) => {
-                          const league = personsMatchesData.find(
-                            (match) => match.competition.id === id
-                          )?.competition;
-                          return (
-                            <option key={id} value={id}>
-                              {league?.name ?? "NO DATA"}
-                            </option>
-                          );
-                        })}
+                        <option value="">ALL</option>
+                        {leagueOptions.length > 1
+                          ? leagueOptions.map((option) => (
+                              <option key={option.id} value={option.id}>
+                                {option.name}
+                              </option>
+                            ))
+                          : null}
                       </select>
                     </div>
                     <Button

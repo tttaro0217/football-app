@@ -1,11 +1,11 @@
 .favorite {
   padding: 100px 30px;
-  max-width: 1200px; /* PCでの最大幅を設定 */
-  margin: 0 auto; /* 中央に配置 */
+  max-width: 1200px;
+  margin: 0 auto;
   text-align: center;
 
   @media (max-width: 768px) {
-    padding: 50px 10px; /* スマートフォン用にパディングを調整 */
+    padding: 50px 10px;
   }
 
   &__title {
@@ -29,7 +29,7 @@
       font-size: 30px;
 
       @media (max-width: 768px) {
-        font-size: 24px; /* スマートフォン用にフォントサイズを調整 */
+        font-size: 24px;
       }
     }
   }
@@ -46,15 +46,12 @@
 
   &__content {
     width: 100%;
-    max-width: 600px; /* 各セクションの最大幅を設定 */
-    // &:not(:last-child) {
-    //   margin-bottom: 50px;
-    // }
+    max-width: 600px;
 
     @media (max-width: 768px) {
       margin: 0 auto;
       &:not(:last-child) {
-        margin-bottom: 30px; /* スマートフォン用にマージンを調整 */
+        margin-bottom: 30px;
       }
     }
   }
@@ -65,7 +62,7 @@
     font-size: 25px;
 
     @media (max-width: 768px) {
-      font-size: 20px; /* スマートフォン用にフォントサイズを調整 */
+      font-size: 20px;
     }
   }
 
@@ -80,16 +77,16 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
-    width: 100%; /* 幅を100%に設定 */
-    max-width: 600px; /* 最大幅を設定 */
-    margin: 0 auto; /* 中央に配置 */
+    gap: 15px;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
 
     &:not(:last-child) {
       margin-bottom: 20px;
 
       @media (max-width: 768px) {
-        margin-bottom: 15px; /* スマートフォン用にマージンを調整 */
+        margin-bottom: 15px;
       }
     }
   }
@@ -107,34 +104,38 @@
     font-weight: 700;
 
     @media (max-width: 768px) {
-      font-size: 18px; /* スマートフォン用にフォントサイズを調整 */
+      font-size: 18px;
     }
   }
 
   &__link,
   &__remove {
     color: #fff;
-    padding: 8px 12px; /* ボタンのパディングを追加 */
+    padding: 8px 12px;
     text-align: center;
-    border-radius: 5px; /* ボタンに丸みを追加 */
-    background-color: #223a70; /* ボタンの背景色を追加 */
+    border-radius: 5px;
+    background-color: #223a70;
     cursor: pointer;
     width: 150px;
 
     @media (max-width: 768px) {
-      width: 100px; /* スマートフォン用にボタンの幅を自動に */
+      width: 100px;
     }
   }
 
   &__link {
-    background-color: #3aabd2; /* 詳細ボタンの背景色 */
+    background-color: #3aabd2;
+
+    &:hover {
+      background-color: #3aabd2;
+    }
   }
 
   &__remove {
-    background-color: #c82333; /* 削除ボタンの背景色 */
+    background-color: #c82333;
 
     &:hover {
-      background-color: #c82333; /* 削除ボタンのホバー色 */
+      background-color: #c82333;
     }
   }
 }
