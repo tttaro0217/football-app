@@ -241,15 +241,18 @@ export default function PersonsPage() {
             <h2 className={c["container__title"]}>PLAYER</h2>
             <div className={c["heading"]}>
               <div className={c["title"]}>
-                <div className={c["title__emblem"]}>
-                  <ImageWithFallback
-                    src={personsData.currentTeam?.crest ?? ""}
-                    alt={personsData.name}
-                    width={50}
-                    height={50}
-                  />
+                <div className={c["title__top"]}>
+                  <div className={c["title__emblem"]}>
+                    <ImageWithFallback
+                      src={personsData.currentTeam?.crest ?? ""}
+                      alt={personsData.name}
+                      width={50}
+                      height={50}
+                      className={c["title__emblem__icon"]}
+                    />
+                  </div>
+                  <h2 className={c["title__text"]}>{personsData.name}</h2>
                 </div>
-                <h2 className={c["title__text"]}>{personsData.name}</h2>
                 {personsData.name && personsData.currentTeam.crest && (
                   <a
                     onClick={() =>
@@ -282,7 +285,7 @@ export default function PersonsPage() {
                     : undefined
                 }
               >
-                {personsData.currentTeam?.name ?? "N/A"}
+                {personsData.currentTeam?.name ?? "NO DATA"}
               </a>
             </div>
             <div className={c["matches"]}>
@@ -312,7 +315,7 @@ export default function PersonsPage() {
                           )?.competition;
                           return (
                             <option key={id} value={id}>
-                              {league?.name ?? "N/A"}
+                              {league?.name ?? "NO DATA"}
                             </option>
                           );
                         })}
@@ -351,18 +354,22 @@ export default function PersonsPage() {
                                   className={c["matches__teamOuter"]}
                                 >
                                   <ImageWithFallback
-                                    src={matchesData.homeTeam?.crest ?? ""}
-                                    alt={matchesData.homeTeam?.name ?? "N/A"}
+                                    src={matchesData.homeTeam.crest}
+                                    alt={
+                                      matchesData.homeTeam?.name ?? "NO DATA"
+                                    }
                                     width={30}
                                     height={30}
                                   />
-                                  <p>{matchesData.homeTeam?.name ?? "N/A"}</p>
+                                  <p>
+                                    {matchesData.homeTeam?.name ?? "NO DATA"}
+                                  </p>
                                 </div>
                               </td>
                               <td>
-                                {matchesData.score?.fullTime?.home ?? "N/A"}
+                                {matchesData.score?.fullTime?.home ?? "NO DATA"}
                                 {"-"}
-                                {matchesData.score?.fullTime?.away ?? "N/A"}
+                                {matchesData.score?.fullTime?.away ?? "NO DATA"}
                               </td>
                               <td>
                                 <div
@@ -372,12 +379,16 @@ export default function PersonsPage() {
                                   className={c["matches__teamOuter"]}
                                 >
                                   <ImageWithFallback
-                                    src={matchesData.awayTeam?.crest ?? ""}
-                                    alt={matchesData.awayTeam?.name ?? "N/A"}
+                                    src={matchesData.awayTeam.crest}
+                                    alt={
+                                      matchesData.awayTeam?.name ?? "NO DATA"
+                                    }
                                     width={30}
                                     height={30}
                                   />
-                                  <p>{matchesData.awayTeam?.name ?? "N/A"}</p>
+                                  <p>
+                                    {matchesData.awayTeam?.name ?? "NO DATA"}
+                                  </p>
                                 </div>
                               </td>
                               <td>
@@ -390,13 +401,15 @@ export default function PersonsPage() {
                                   className={c["matches__competition"]}
                                 >
                                   <ImageWithFallback
-                                    src={matchesData.competition?.emblem ?? ""}
-                                    alt={matchesData.competition?.name ?? "N/A"}
+                                    src={matchesData.competition.emblem}
+                                    alt={
+                                      matchesData.competition?.name ?? "NO DATA"
+                                    }
                                     width={30}
                                     height={30}
                                   />
                                   <p>
-                                    {matchesData.competition?.name ?? "N/A"}
+                                    {matchesData.competition?.name ?? "NO DATA"}
                                   </p>
                                   <p className={c["matches__seazon"]}>
                                     {formatSeason(
@@ -434,15 +447,15 @@ export default function PersonsPage() {
                               className={c["matches__teamOuter"]}
                             >
                               <ImageWithFallback
-                                src={matchesData.homeTeam?.crest ?? ""}
-                                alt={matchesData.homeTeam?.name ?? "N/A"}
+                                src={matchesData.homeTeam.crest}
+                                alt={matchesData.homeTeam?.name ?? "NO DATA"}
                                 width={30}
                                 height={30}
                               />
-                              <p>{matchesData.homeTeam?.name ?? "N/A"}</p>
+                              <p>{matchesData.homeTeam?.name ?? "NO DATA"}</p>
                             </div>
                             <span className={c["matches__score"]}>
-                              {matchesData.score?.fullTime?.home ?? "N/A"}
+                              {matchesData.score?.fullTime?.home ?? "NO DATA"}
                             </span>
                           </div>
                         </div>
@@ -455,15 +468,15 @@ export default function PersonsPage() {
                               className={c["matches__teamOuter"]}
                             >
                               <ImageWithFallback
-                                src={matchesData.awayTeam?.crest ?? ""}
-                                alt={matchesData.awayTeam?.name ?? "N/A"}
+                                src={matchesData.awayTeam.crest}
+                                alt={matchesData.awayTeam?.name ?? "NO DATA"}
                                 width={30}
                                 height={30}
                               />
-                              <p>{matchesData.awayTeam?.name ?? "N/A"}</p>
+                              <p>{matchesData.awayTeam?.name ?? "NO DATA"}</p>
                             </div>
                             <span className={c["matches__score"]}>
-                              {matchesData.score?.fullTime?.away ?? "N/A"}
+                              {matchesData.score?.fullTime?.away ?? "NO DATA"}
                             </span>
                           </div>
                         </div>
@@ -475,12 +488,12 @@ export default function PersonsPage() {
                             className={c["matches__competition"]}
                           >
                             <ImageWithFallback
-                              src={matchesData.competition?.emblem ?? ""}
-                              alt={matchesData.competition?.name ?? "N/A"}
+                              src={matchesData.competition.emblem}
+                              alt={matchesData.competition?.name ?? "NO DATA"}
                               width={30}
                               height={30}
                             />
-                            <p>{matchesData.competition?.name ?? "N/A"}</p>
+                            <p>{matchesData.competition?.name ?? "NO DATA"}</p>
                             <p className={c["matches__seazon"]}>
                               {formatSeason(
                                 matchesData.season?.startDate ?? "",

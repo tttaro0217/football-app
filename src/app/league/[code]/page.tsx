@@ -273,8 +273,8 @@ export default function LeaguePage() {
             <h3 className={c["title__areaName"]}>{leagueData.area.name}</h3>
           </div>
           <p className={c["container__season"]}>{`シーズン: ${
-            leagueData.currentSeason?.startDate ?? "N/A"
-          } ~ ${leagueData.currentSeason?.endDate ?? "N/A"}`}</p>
+            leagueData.currentSeason?.startDate ?? "NO DATA"
+          } ~ ${leagueData.currentSeason?.endDate ?? "NO DATA"}`}</p>
           {leagueData.currentSeason?.winner ? (
             <div className={c["container__winner"]}>
               <GiChampions className={c["container__winner__icon"]} />
@@ -341,7 +341,7 @@ export default function LeaguePage() {
                                     navigatePersons(scoresData.player?.id ?? 0)
                                   }
                                 >
-                                  {scoresData.player?.name ?? "N/A"}
+                                  {scoresData.player?.name ?? "NO DATA"}
                                 </a>
                               </td>
                               <td
@@ -352,12 +352,12 @@ export default function LeaguePage() {
                               >
                                 <ImageWithFallback
                                   src={scoresData.team?.crest ?? ""}
-                                  alt={scoresData.team?.name ?? "N/A"}
+                                  alt={scoresData.team?.name ?? "NO DATA"}
                                   width={30}
                                   height={30}
                                 />
                                 <p className={s["btn"]}>
-                                  {scoresData.team?.name ?? "N/A"}
+                                  {scoresData.team?.name ?? "NO DATA"}
                                 </p>
                               </td>
                               <td>{`${scoresData.goals} (${
@@ -389,7 +389,7 @@ export default function LeaguePage() {
                                 className={s["scores__teamOuter"]}
                               >
                                 <p className={s["btn"]}>
-                                  {scoresData.player?.name ?? "N/A"}
+                                  {scoresData.player?.name ?? "NO DATA"}
                                 </p>
                               </a>
                               <a
@@ -400,12 +400,12 @@ export default function LeaguePage() {
                               >
                                 <ImageWithFallback
                                   src={scoresData.team?.crest ?? ""}
-                                  alt={scoresData.team?.name ?? "N/A"}
+                                  alt={scoresData.team?.name ?? "NO DATA"}
                                   width={20}
                                   height={20}
                                 />
                                 <p className={s["btn"]}>
-                                  {scoresData.team?.name ?? "N/A"}
+                                  {scoresData.team?.name ?? "NO DATA"}
                                 </p>
                               </a>
                             </div>
@@ -488,17 +488,17 @@ export default function LeaguePage() {
                                   >
                                     <ImageWithFallback
                                       src={matchesData.homeTeam?.crest ?? ""}
-                                      alt={matchesData.homeTeam?.name ?? "N/A"}
+                                      alt={matchesData.homeTeam?.name ?? "NO DATA"}
                                       width={30}
                                       height={30}
                                     />
-                                    <p>{matchesData.homeTeam?.name ?? "N/A"}</p>
+                                    <p>{matchesData.homeTeam?.name ?? "NO DATA"}</p>
                                   </div>
                                 </td>
                                 <td>
-                                  {matchesData.score?.fullTime?.home}
+                                  {matchesData.score?.fullTime?.home ?? ""}
                                   {"-"}
-                                  {matchesData.score?.fullTime?.away}
+                                  {matchesData.score?.fullTime?.away ?? ""}
                                 </td>
                                 <td>
                                   <div
@@ -511,11 +511,11 @@ export default function LeaguePage() {
                                   >
                                     <ImageWithFallback
                                       src={matchesData.awayTeam?.crest ?? ""}
-                                      alt={matchesData.awayTeam?.name ?? "N/A"}
+                                      alt={matchesData.awayTeam?.name ?? "NO DATA"}
                                       width={30}
                                       height={30}
                                     />
-                                    <p>{matchesData.awayTeam?.name ?? "N/A"}</p>
+                                    <p>{matchesData.awayTeam?.name ?? "NO DATA"}</p>
                                   </div>
                                 </td>
                                 {leagueData.type === "CUP" && (
@@ -551,7 +551,7 @@ export default function LeaguePage() {
                           </div>
                           <div className={c["matches__card__row"]}>
                             <div className={c["matches__teamScore"]}>
-                              <div
+                              <a
                                 onClick={() =>
                                   navigateTeams(matchesData.homeTeam?.id ?? 0)
                                 }
@@ -559,20 +559,20 @@ export default function LeaguePage() {
                               >
                                 <ImageWithFallback
                                   src={matchesData.homeTeam?.crest ?? ""}
-                                  alt={matchesData.homeTeam?.name ?? "N/A"}
+                                  alt={matchesData.homeTeam?.name ?? "NO DATA"}
                                   width={30}
                                   height={30}
                                 />
-                                <p>{matchesData.homeTeam?.name ?? "N/A"}</p>
-                              </div>
+                                <p>{matchesData.homeTeam?.name ?? "NO DATA"}</p>
+                              </a>
                               <span className={c["matches__score"]}>
-                                {matchesData.score?.fullTime?.home}
+                                {matchesData.score?.fullTime?.home ?? "-"}
                               </span>
                             </div>
                           </div>
                           <div className={c["matches__card__row"]}>
                             <div className={c["matches__teamScore"]}>
-                              <div
+                              <a
                                 onClick={() =>
                                   navigateTeams(matchesData.awayTeam?.id ?? 0)
                                 }
@@ -580,14 +580,14 @@ export default function LeaguePage() {
                               >
                                 <ImageWithFallback
                                   src={matchesData.awayTeam?.crest ?? ""}
-                                  alt={matchesData.awayTeam?.name ?? "N/A"}
+                                  alt={matchesData.awayTeam?.name ?? "NO DATA"}
                                   width={30}
                                   height={30}
                                 />
-                                <p>{matchesData.awayTeam?.name ?? "N/A"}</p>
-                              </div>
+                                <p>{matchesData.awayTeam?.name ?? "NO DATA"}</p>
+                              </a>
                               <span className={c["matches__score"]}>
-                                {matchesData.score?.fullTime?.away}
+                                {matchesData.score?.fullTime?.away ?? "-"}
                               </span>
                             </div>
                           </div>

@@ -37,8 +37,24 @@
     margin-bottom: 10px;
   }
 
+  &__top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    @media (max-width: 768px) {
+    }
+  }
+
   &__emblem {
     display: block;
+
+    &__icon {
+      @media (max-width: 768px) {
+        width: 40px;
+        height: 40px;
+      }
+    }
   }
 
   &__text,
@@ -47,7 +63,7 @@
     margin: 0;
 
     @media (max-width: 768px) {
-      font-size: 24px;
+      font-size: 20px;
     }
   }
 
@@ -174,7 +190,7 @@
       flex-direction: column;
       gap: 10px;
       padding: 10px;
-      background-color: #f9f9f9;
+      background-color: #223a70;
       margin: 20px 0;
     }
 
@@ -327,7 +343,7 @@
 
     @media (max-width: 768px) {
       font-size: 30px;
-      margin-bottom: 30px;
+      margin-bottom: 10px;
     }
   }
 
