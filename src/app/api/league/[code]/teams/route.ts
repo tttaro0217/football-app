@@ -1,5 +1,3 @@
-export const fetchCache = 'force-no-store';
-
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
@@ -23,6 +21,7 @@ export async function GET(
       throw new Error(`Failed to fetch data: ${res.statusText}`);
     }
     const data = await res.json(); // レスポンスをJSON形式で解析
+    
 
     return NextResponse.json(data);
   } catch (error) {
