@@ -21,6 +21,7 @@ export async function GET(
       throw new Error(`Failed to fetch data: ${res.statusText}`);
     }
     const data = await res.json(); // レスポンスをJSON形式で解析
+    
 
     return NextResponse.json(data);
   } catch (error) {
@@ -30,5 +31,3 @@ export async function GET(
     );
   }
 }
-
-export const revalidate = 0;
