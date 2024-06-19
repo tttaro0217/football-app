@@ -251,6 +251,11 @@ export default function LeaguePage() {
     return `${year}/${month}/${day} ${hours}:${minutes}`;
   };
 
+  console.log("leagueData", leagueData);
+  console.log("matchesDatas", matchesDatas);
+  console.log("teamsData", teamsData);
+  console.log("scoresDatas", scoresDatas);
+
   return (
     <>
       <Header />
