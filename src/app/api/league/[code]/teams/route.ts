@@ -21,9 +21,16 @@ export async function GET(
       throw new Error(`Failed to fetch data: ${res.statusText}`);
     }
     const data = await res.json(); // レスポンスをJSON形式で解析
-    
 
-    return NextResponse.json(data);
+    return NextResponse.json(data, {
+      headers: {
+        "Cache-Control":
+          "no-store, no-cache, must-revalidate, proxy-revalidate",
+        Pragma: "no-cache",
+        Expires: "0",
+        "Surrogate-Control": "no-store",
+      },
+    });
   } catch (error) {
     return NextResponse.json(
       { error: "Failed to fetch data" },
