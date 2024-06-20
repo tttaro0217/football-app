@@ -275,7 +275,9 @@ export default function LeaguePage() {
             </div>
             <h2 className={c["title__text"]}>{leagueData.name}</h2>
             <span>/</span>
-            <h3 className={c["title__areaName"]}>{leagueData.area.name}</h3>
+            <h3 className={c["title__areaName"]}>
+              {leagueData.area ? leagueData.area.name : "No Area"}
+            </h3>
           </div>
           <p className={c["container__season"]}>{`シーズン: ${
             leagueData.currentSeason?.startDate ?? "NO DATA"
